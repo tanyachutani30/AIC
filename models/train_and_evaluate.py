@@ -5,6 +5,9 @@ Vectorized, high-speed multi-line training runner and held-out benchmark evaluat
 
 import os
 import json
+import subprocess
+import datetime
+import shutil
 from pathlib import Path
 from typing import Dict, List, Any
 import numpy as np
@@ -251,11 +254,23 @@ def run_training_and_evaluation() -> Dict[str, Any]:
         "threshold_tradeoff_curve": tradeoff_curve
     }
 
-    report_path = artifacts_dir / "evaluation_report.json"
+    try:
+        git_hash = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode("utf-8").strip()
+    except Exception:
+        git_hash = "unknown"
+
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_filename = f"evaluation_report_{git_hash}_{timestamp}.json"
+    report_path = artifacts_dir / report_filename
+    
     with open(report_path, "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2)
 
+    latest_path = artifacts_dir / "evaluation_latest.json"
+    shutil.copy(report_path, latest_path)
+
     print(f"\n[Done] Evaluation report exported to: {report_path}")
+    print(f"       and updated latest link at: {latest_path}")
     print("=" * 60)
     return report
 
