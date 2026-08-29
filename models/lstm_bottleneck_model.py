@@ -110,6 +110,7 @@ class BottleneckForecaster:
 
         optimizer = torch.optim.AdamW(self.model.parameters(), lr=lr, weight_decay=1e-4)
         criterion = nn.MSELoss()
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5)
 
         self.loss_history = {"train_loss": [], "val_loss": []}
         best_val_loss = float("inf")
@@ -141,6 +142,8 @@ class BottleneckForecaster:
 
             epoch_val_loss = running_val_loss / len(X_val)
             self.loss_history["val_loss"].append(round(epoch_val_loss, 4))
+            
+            scheduler.step(epoch_val_loss)
 
             if epoch_val_loss < best_val_loss:
                 best_val_loss = epoch_val_loss
@@ -152,6 +155,34 @@ class BottleneckForecaster:
             self.model.load_state_dict(best_weights)
         self.model.eval()
         return self.loss_history
+
+    def train_multi_seed(self, train_data: List[Dict[str, Any]], val_data: List[Dict[str, Any]], seeds: List[int] = [42, 43, 44], **kwargs) -> Dict[str, Any]:
+        """
+        Trains independently for each seed and returns mean/std of final val_loss and MAE.
+        """
+        val_losses = []
+        maes = []
+        
+        for seed in seeds:
+            torch.manual_seed(seed)
+            np.random.seed(seed)
+            
+            # Reset model to ensure independent training
+            self.model = BottleneckLSTMNet(input_dim=4, hidden_dim=self.model.lstm.hidden_size, forecast_horizon=self.horizon)
+            
+            hist = self.train_model(train_data, val_data, **kwargs)
+            val_losses.append(hist["val_loss"][-1])
+            
+            eval_metrics = self.evaluate_baselines_vs_lstm(val_data)
+            maes.append(eval_metrics.get("lstm", {}).get("mae", 0.0))
+            
+        return {
+            "val_loss_mean": float(np.mean(val_losses)),
+            "val_loss_std": float(np.std(val_losses)),
+            "mae_mean": float(np.mean(maes)),
+            "mae_std": float(np.std(maes)),
+            "seeds": seeds
+        }
 
     def predict_forecast(self, recent_15_ticks: List[Dict[str, Any]]) -> Dict[str, Any]:
         self.model.eval()
@@ -202,37 +233,59 @@ class BottleneckForecaster:
         with torch.no_grad():
             lstm_preds_norm = self.model(torch.tensor(X_test, dtype=torch.float32)).numpy()
 
-        # Denormalize to true seconds
+        # Denormalize to true values for Cycle Time (index 0) and Queue Length (index 1)
         lstm_ct_pred = (lstm_preds_norm[:, :, 0] * self.norm_stds[0]) + self.norm_means[0]
+        lstm_q_pred = (lstm_preds_norm[:, :, 1] * self.norm_stds[1]) + self.norm_means[1]
+        
         true_ct = (y_test_norm[:, :, 0] * self.norm_stds[0]) + self.norm_means[0]
+        true_q = (y_test_norm[:, :, 1] * self.norm_stds[1]) + self.norm_means[1]
 
-        lstm_mae = float(np.mean(np.abs(lstm_ct_pred - true_ct)))
-        lstm_rmse = float(np.sqrt(np.mean((lstm_ct_pred - true_ct) ** 2)))
+        lstm_mae_ct = float(np.mean(np.abs(lstm_ct_pred - true_ct)))
+        lstm_rmse_ct = float(np.sqrt(np.mean((lstm_ct_pred - true_ct) ** 2)))
+        lstm_mae_q = float(np.mean(np.abs(lstm_q_pred - true_q)))
+        lstm_rmse_q = float(np.sqrt(np.mean((lstm_q_pred - true_q) ** 2)))
 
         # Naive Persistence: predict future as last observed value in sequence
         last_observed_ct = (X_test[:, -1, 0] * self.norm_stds[0]) + self.norm_means[0]
-        persistence_pred = np.repeat(last_observed_ct[:, np.newaxis], self.horizon, axis=1)
-        persist_mae = float(np.mean(np.abs(persistence_pred - true_ct)))
-        persist_rmse = float(np.sqrt(np.mean((persistence_pred - true_ct) ** 2)))
+        last_observed_q = (X_test[:, -1, 1] * self.norm_stds[1]) + self.norm_means[1]
+        
+        persistence_pred_ct = np.repeat(last_observed_ct[:, np.newaxis], self.horizon, axis=1)
+        persistence_pred_q = np.repeat(last_observed_q[:, np.newaxis], self.horizon, axis=1)
+        
+        persist_mae_ct = float(np.mean(np.abs(persistence_pred_ct - true_ct)))
+        persist_rmse_ct = float(np.sqrt(np.mean((persistence_pred_ct - true_ct) ** 2)))
+        persist_mae_q = float(np.mean(np.abs(persistence_pred_q - true_q)))
+        persist_rmse_q = float(np.sqrt(np.mean((persistence_pred_q - true_q) ** 2)))
 
         # Exponential Moving Average (alpha = 0.3)
-        ema_vals = []
+        ema_vals_ct = []
+        ema_vals_q = []
         for i in range(len(X_test)):
             seq_ct = (X_test[i, :, 0] * self.norm_stds[0]) + self.norm_means[0]
-            val = seq_ct[0]
+            seq_q = (X_test[i, :, 1] * self.norm_stds[1]) + self.norm_means[1]
+            val_ct = seq_ct[0]
+            val_q = seq_q[0]
             for c in seq_ct[1:]:
-                val = 0.3 * c + 0.7 * val
-            ema_vals.append(val)
-        ema_pred = np.repeat(np.array(ema_vals)[:, np.newaxis], self.horizon, axis=1)
-        ema_mae = float(np.mean(np.abs(ema_pred - true_ct)))
-        ema_rmse = float(np.sqrt(np.mean((ema_pred - true_ct) ** 2)))
+                val_ct = 0.3 * c + 0.7 * val_ct
+            for q in seq_q[1:]:
+                val_q = 0.3 * q + 0.7 * val_q
+            ema_vals_ct.append(val_ct)
+            ema_vals_q.append(val_q)
+            
+        ema_pred_ct = np.repeat(np.array(ema_vals_ct)[:, np.newaxis], self.horizon, axis=1)
+        ema_pred_q = np.repeat(np.array(ema_vals_q)[:, np.newaxis], self.horizon, axis=1)
+        
+        ema_mae_ct = float(np.mean(np.abs(ema_pred_ct - true_ct)))
+        ema_rmse_ct = float(np.sqrt(np.mean((ema_pred_ct - true_ct) ** 2)))
+        ema_mae_q = float(np.mean(np.abs(ema_pred_q - true_q)))
+        ema_rmse_q = float(np.sqrt(np.mean((ema_pred_q - true_q) ** 2)))
 
-        improvement = float((persist_mae - lstm_mae) / persist_mae * 100.0)
+        improvement = float((persist_mae_ct - lstm_mae_ct) / persist_mae_ct * 100.0)
 
         return {
-            "lstm": {"mae": round(lstm_mae, 3), "rmse": round(lstm_rmse, 3)},
-            "naive_persistence": {"mae": round(persist_mae, 3), "rmse": round(persist_rmse, 3)},
-            "ema_baseline": {"mae": round(ema_mae, 3), "rmse": round(ema_rmse, 3)},
+            "lstm": {"mae": round(lstm_mae_ct, 3), "rmse": round(lstm_rmse_ct, 3), "queue_mae": round(lstm_mae_q, 3), "queue_rmse": round(lstm_rmse_q, 3)},
+            "naive_persistence": {"mae": round(persist_mae_ct, 3), "rmse": round(persist_rmse_ct, 3), "queue_mae": round(persist_mae_q, 3), "queue_rmse": round(persist_rmse_q, 3)},
+            "ema_baseline": {"mae": round(ema_mae_ct, 3), "rmse": round(ema_rmse_ct, 3), "queue_mae": round(ema_mae_q, 3), "queue_rmse": round(ema_rmse_q, 3)},
             "mae_reduction_pct": round(improvement, 1)
         }
 
