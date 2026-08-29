@@ -9,6 +9,7 @@ Provides:
 from typing import Dict, List, Any, Tuple, Optional
 import numpy as np
 from collections import defaultdict
+import joblib
 
 
 class AssemblyLinePropagationGraph:
@@ -149,3 +150,18 @@ class AssemblyLinePropagationGraph:
             "root_cause_confidence": root_cause_station["confidence"] if root_cause_station else 0.85,
             "genealogy_trace_path": genealogy_path
         }
+
+    def save(self, filepath: str) -> None:
+        joblib.dump({
+            "station_count": self.station_count,
+            "adj_list": self.adj_list,
+            "rev_adj_list": self.rev_adj_list,
+            "edge_weights": self.edge_weights
+        }, filepath)
+
+    def load(self, filepath: str) -> None:
+        data = joblib.load(filepath)
+        self.station_count = data["station_count"]
+        self.adj_list = data["adj_list"]
+        self.rev_adj_list = data["rev_adj_list"]
+        self.edge_weights = data["edge_weights"]

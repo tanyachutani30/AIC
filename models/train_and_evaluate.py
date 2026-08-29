@@ -16,6 +16,7 @@ from data_sim.simulator import SyntheticLineSimulator
 from models.isolation_forest_model import StationIsolationForestDetector
 from models.lstm_bottleneck_model import BottleneckForecaster
 from models.random_forest_defect_model import DefectRiskRandomForest, DarkStationInferenceModel
+from models.propagation_graph import AssemblyLinePropagationGraph
 from models.validation_metrics import TrustValidationTracker
 
 
@@ -142,6 +143,23 @@ def run_training_and_evaluation() -> Dict[str, Any]:
     rf_dark.fit(np.array(X_dark, dtype=np.float32), np.array(y_dark, dtype=np.float32))
     rf_dark.save(str(artifacts_dir / "dark_station_rf.joblib"))
     print("  -> Dark Station Inference Regressor trained & saved.")
+
+    # -------------------------------------------------------------
+    # 4.5 Train Propagation Graph Topology
+    # -------------------------------------------------------------
+    print("\n[Step 4.5] Calibrating Propagation Graph Topology...")
+    prop_graph = AssemblyLinePropagationGraph(station_count=36)
+    
+    station_ts_map = {}
+    for r in all_train_records:
+        st_id = r["station_id"]
+        if st_id not in station_ts_map:
+            station_ts_map[st_id] = []
+        station_ts_map[st_id].append(r)
+        
+    prop_graph.calibrate_weights_from_telemetry(station_ts_map)
+    prop_graph.save(str(artifacts_dir / "propagation_graph.joblib"))
+    print("  -> Propagation Graph calibrated & saved.")
 
     # -------------------------------------------------------------
     # 5. Held-Out Generalization Evaluation (Unseen Seed 999)
