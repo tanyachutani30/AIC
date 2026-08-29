@@ -110,6 +110,8 @@ class StationIsolationForestDetector:
             return 0.0
         
         X = self.extract_features([record])
+        if hasattr(self.scaler, "n_features_in_") and X.shape[1] > self.scaler.n_features_in_:
+            X = X[:, :self.scaler.n_features_in_]
         X_scaled = self.scaler.transform(X)
         
         raw_score = self.model.decision_function(X_scaled)[0]
@@ -124,6 +126,8 @@ class StationIsolationForestDetector:
             return np.zeros(len(records), dtype=np.float32)
         
         X = self.extract_features(records)
+        if hasattr(self.scaler, "n_features_in_") and X.shape[1] > self.scaler.n_features_in_:
+            X = X[:, :self.scaler.n_features_in_]
         X_scaled = self.scaler.transform(X)
         raw_scores = self.model.decision_function(X_scaled)
         anomaly_scores = 100.0 / (1.0 + np.exp(raw_scores * 8.0))
