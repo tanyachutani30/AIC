@@ -187,9 +187,9 @@ class DarkStationInferenceModel:
             # Fallback heuristic if not fitted
             dwell_dev = abs(dwell_time - nominal_ct)
             health = max(20.0, 100.0 - dwell_dev * 4.0 - max(0.0, (power_kw - 3.5) * 15.0))
-            if dwell_dev > self.dwell_dev_90 or power_kw > self.power_kw_90:
+            if ambient_noise_rolling_std > 2.0 or dwell_dev > self.dwell_dev_90 or power_kw > self.power_kw_90:
                 confidence = "Low"
-            elif dwell_dev < self.dwell_dev_75 and power_kw < self.power_kw_75:
+            elif abs(optical_estimated_cycle_time - dwell_time) < 3.0 and dwell_dev < self.dwell_dev_75 and power_kw < self.power_kw_75:
                 confidence = "High"
             else:
                 confidence = "Medium"
@@ -205,9 +205,9 @@ class DarkStationInferenceModel:
 
         # Confidence level based on stability of proxy measurements
         dwell_dev = abs(dwell_time - nominal_ct)
-        if dwell_dev > self.dwell_dev_90 or power_kw > self.power_kw_90:
+        if ambient_noise_rolling_std > 2.0 or dwell_dev > self.dwell_dev_90 or power_kw > self.power_kw_90:
             confidence = "Low"
-        elif dwell_dev < self.dwell_dev_75 and power_kw < self.power_kw_75:
+        elif abs(optical_estimated_cycle_time - dwell_time) < 3.0 and dwell_dev < self.dwell_dev_75 and power_kw < self.power_kw_75:
             confidence = "High"
         else:
             confidence = "Medium"

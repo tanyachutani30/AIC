@@ -51,9 +51,17 @@ class DigitalTwinEngine:
                 self.lstm.load(str(self.artifacts_dir / "bottleneck_lstm.pt"))
                 self.rf_defect.load(str(self.artifacts_dir / "defect_rf.joblib"))
                 self.rf_dark.load(str(self.artifacts_dir / "dark_station_rf.joblib"))
+                
+                # Check for feature schema mismatch
+                if self.iforest.is_fitted and hasattr(self.iforest.scaler, "n_features_in_"):
+                    expected_len = self.iforest.extract_features([{}]).shape[1]
+                    if self.iforest.scaler.n_features_in_ != expected_len:
+                        raise ValueError(f"Schema mismatch: Loaded Isolation Forest scaler expects {self.iforest.scaler.n_features_in_} features, but extract_features() outputs {expected_len}.")
+                        
                 print("[DigitalTwinEngine] All ML artifacts loaded successfully.")
             except Exception as e:
                 print(f"[DigitalTwinEngine] Warning loading artifacts: {e}.")
+                raise e  # Fail fast per user request
 
     def set_alert_threshold(self, threshold: float) -> None:
         self.alert_threshold = float(threshold)
