@@ -1,0 +1,75 @@
+{
+  "line_id": "LINE_01_DEFAULT",
+  "line_name": "Body & Assembly Line Alpha (Mixed-Model SUV/Sedan)",
+  "station_count": 36,
+  "sensor_coverage_pct": 72.2,
+  "nominal_takt_time_sec": 60,
+  "zones": [
+    {
+      "zone_id": "ZONE_BODY",
+      "name": "Body Construction",
+      "color": "blue",
+      "stations": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    },
+    {
+      "zone_id": "ZONE_PAINT",
+      "name": "Paint & Coat",
+      "color": "purple",
+      "stations": [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+    },
+    {
+      "zone_id": "ZONE_FINAL",
+      "name": "Final Assembly",
+      "color": "emerald",
+      "stations": [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]
+    }
+  ],
+  "stations": [
+    {"id": 1, "name": "Underbody Sub-Assembly", "zone": "Body Construction", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 56.5},
+    {"id": 2, "name": "Floor Pan Robotic Spot Weld", "zone": "Body Construction", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 58.0},
+    {"id": 3, "name": "Front/Rear Wheelhouse Weld", "zone": "Body Construction", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": false, "nominal_cycle_time": 57.2},
+    {"id": 4, "name": "Stamping Alignment & Clamping", "zone": "Body Construction", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 59.0},
+    {"id": 5, "name": "Manual Reinforcement Bracket", "zone": "Body Construction", "sensor_rich": false, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 55.0},
+    {"id": 6, "name": "Side Frame Robotic Framing", "zone": "Body Construction", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 60.5},
+    {"id": 7, "name": "Roof Bow Laser Braze", "zone": "Body Construction", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": true, "nominal_cycle_time": 58.5},
+    {"id": 8, "name": "Door Hinge Multi-Spindle Torquing", "zone": "Body Construction", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 59.2},
+    {"id": 9, "name": "Closure Panel Manual Fitment", "zone": "Body Construction", "sensor_rich": false, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 54.0},
+    {"id": 10, "name": "Body Shell Dimensional Laser CMM", "zone": "Body Construction", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": true, "nominal_cycle_time": 61.0},
+    {"id": 11, "name": "Fender Seam Sealing", "zone": "Body Construction", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 57.8},
+    {"id": 12, "name": "Body Shop Transfer Buffer", "zone": "Body Construction", "sensor_rich": false, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 52.0},
+
+    {"id": 13, "name": "E-Coat Dip Immersion Tank", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 62.0},
+    {"id": 14, "name": "E-Coat High-Temp Curing Oven", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": true, "nominal_cycle_time": 64.0},
+    {"id": 15, "name": "PVC Underbody Acoustic Sealant", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": false, "nominal_cycle_time": 57.0},
+    {"id": 16, "name": "Manual Seam Mastic Touchup", "zone": "Paint & Coat", "sensor_rich": false, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 55.5},
+    {"id": 17, "name": "Automated Primer Robotic Bell", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 59.5},
+    {"id": 18, "name": "Primer Intermediate Flash-Off", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": true, "nominal_cycle_time": 56.0},
+    {"id": 19, "name": "Basecoat Electrostatic Atomizer", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 60.0},
+    {"id": 20, "name": "Clearcoat Robotic High-Gloss Spray", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 59.8},
+    {"id": 21, "name": "Thermal Clearcoat Curing Tunnel", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": true, "nominal_cycle_time": 63.5},
+    {"id": 22, "name": "Optical Surface Defect Scanner", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 58.0},
+    {"id": 23, "name": "Manual Finesse & Polish Bay", "zone": "Paint & Coat", "sensor_rich": false, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 53.0},
+    {"id": 24, "name": "Paint-to-Assembly Accumulator", "zone": "Paint & Coat", "sensor_rich": false, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 50.0},
+
+    {"id": 25, "name": "Wiring Harness Installation", "zone": "Final Assembly", "sensor_rich": false, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 58.0},
+    {"id": 26, "name": "Instrument Panel & Cockpit Decking", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": false, "nominal_cycle_time": 61.5},
+    {"id": 27, "name": "Windshield & Rear Glass Robot Cell", "zone": "Final Assembly", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 57.0},
+    {"id": 28, "name": "Powertrain / Chassis Marriage", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 62.5},
+    {"id": 29, "name": "Subframe Multi-Bolt Torque Station", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": false, "nominal_cycle_time": 59.0},
+    {"id": 30, "name": "Suspension & Brake Line Routing", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 58.5},
+    {"id": 31, "name": "High-Voltage Battery Pack Docking", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 63.0},
+    {"id": 32, "name": "HV Coolant Automated Evac & Fill", "zone": "Final Assembly", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 57.5},
+    {"id": 33, "name": "Front/Rear Seats Ergonomic Crane", "zone": "Final Assembly", "sensor_rich": false, "has_torque": true, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 56.0},
+    {"id": 34, "name": "Wheel Nut Fastening Rig", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": false, "nominal_cycle_time": 55.0},
+    {"id": 35, "name": "ADAS Camera & Radar Calibration", "zone": "Final Assembly", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 60.0},
+    {"id": 36, "name": "End-of-Line Roll & Brake Dyno", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 64.0}
+  ],
+  "anomaly_scenarios_config": {
+    "gradual_drift_station_id": 8,
+    "gradual_drift_channel": "torque_nm",
+    "bearing_wear_station_id": 28,
+    "upstream_source_station_id": 4,
+    "downstream_manifest_station_id": 22,
+    "bottleneck_only_station_id": 14
+  }
+}

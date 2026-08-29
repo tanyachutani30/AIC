@@ -1,0 +1,33 @@
+{
+  "model": "PyTorch LSTM Bottleneck Forecaster (Sequence-to-Sequence)",
+  "training_line": {
+    "lstm": {
+      "mae": 1.25,
+      "rmse": 1.606
+    },
+    "naive_persistence": {
+      "mae": 1.532,
+      "rmse": 1.992
+    },
+    "ema_baseline": {
+      "mae": 1.356,
+      "rmse": 1.755
+    },
+    "mae_reduction_pct": 18.4
+  },
+  "held_out_test_line": {
+    "lstm": {
+      "mae": 1.116,
+      "rmse": 1.421
+    },
+    "naive_persistence": {
+      "mae": 1.316,
+      "rmse": 1.658
+    },
+    "ema_baseline": {
+      "mae": 1.129,
+      "rmse": 1.423
+    },
+    "mae_reduction_pct": 15.1
+  }
+}

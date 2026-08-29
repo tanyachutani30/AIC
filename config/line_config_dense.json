@@ -1,0 +1,87 @@
+{
+  "line_id": "LINE_03_DENSE",
+  "line_name": "Gigafactory Next-Gen Line Gamma (Electric Performance SUV)",
+  "station_count": 48,
+  "sensor_coverage_pct": 89.6,
+  "nominal_takt_time_sec": 55,
+  "zones": [
+    {
+      "zone_id": "ZONE_BODY",
+      "name": "Body Construction",
+      "color": "blue",
+      "stations": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    },
+    {
+      "zone_id": "ZONE_PAINT",
+      "name": "Paint & Coat",
+      "color": "purple",
+      "stations": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
+    },
+    {
+      "zone_id": "ZONE_FINAL",
+      "name": "Final Assembly",
+      "color": "emerald",
+      "stations": [33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
+    }
+  ],
+  "stations": [
+    {"id": 1, "name": "Gigacasting Front Subframe Load", "zone": "Body Construction", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 52.0},
+    {"id": 2, "name": "Gigacasting Rear Subframe Load", "zone": "Body Construction", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 52.5},
+    {"id": 3, "name": "Structural Battery Tray Clamping", "zone": "Body Construction", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 53.0},
+    {"id": 4, "name": "Laser Welding Robot Cell A", "zone": "Body Construction", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 54.0},
+    {"id": 5, "name": "Laser Welding Robot Cell B", "zone": "Body Construction", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 54.0},
+    {"id": 6, "name": "Side Aperture Inner Weld", "zone": "Body Construction", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 53.5},
+    {"id": 7, "name": "Side Aperture Outer Framing", "zone": "Body Construction", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 55.0},
+    {"id": 8, "name": "Manual Bracket Placement", "zone": "Body Construction", "sensor_rich": false, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 50.0},
+    {"id": 9, "name": "Panoramic Glass Roof Robot", "zone": "Body Construction", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 53.0},
+    {"id": 10, "name": "Automated Door Fastening Multi-Spindle", "zone": "Body Construction", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 54.5},
+    {"id": 11, "name": "Frunk & Hood Precision Fitment", "zone": "Body Construction", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": false, "nominal_cycle_time": 53.0},
+    {"id": 12, "name": "Tailgate Precision Torquing", "zone": "Body Construction", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": false, "nominal_cycle_time": 53.5},
+    {"id": 13, "name": "High-Speed Laser Gap & Flushness CMM", "zone": "Body Construction", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": true, "nominal_cycle_time": 55.0},
+    {"id": 14, "name": "Automated Seam Adhesive Dispensing", "zone": "Body Construction", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 52.5},
+    {"id": 15, "name": "Ultrasonic Weld Inspection", "zone": "Body Construction", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": false, "nominal_cycle_time": 54.0},
+    {"id": 16, "name": "Body Smart Buffer Transfer", "zone": "Body Construction", "sensor_rich": false, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 48.0},
+
+    {"id": 17, "name": "Degrease & Pre-Treatment Spray", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 55.0},
+    {"id": 18, "name": "Cathodic E-Coat Immersion Bath", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 56.5},
+    {"id": 19, "name": "E-Coat Induction Fast Bake Oven", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": true, "nominal_cycle_time": 57.0},
+    {"id": 20, "name": "Robotic Fine Seam Mastic Sealant", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 53.5},
+    {"id": 21, "name": "Liquid Acoustic Spray Damper", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 54.0},
+    {"id": 22, "name": "Primer Electrostatic High-Transfer Bell", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 54.5},
+    {"id": 23, "name": "Robotic Featherduster Clean Cell", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": false, "nominal_cycle_time": 51.0},
+    {"id": 24, "name": "Basecoat Tri-Coat Color Application", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 55.0},
+    {"id": 25, "name": "Basecoat Dehydration Flash Tunnel", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": true, "nominal_cycle_time": 53.0},
+    {"id": 26, "name": "Clearcoat 2K High-Solid Gloss Bell", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 55.5},
+    {"id": 27, "name": "IR Radiant Heating Zone", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": true, "nominal_cycle_time": 56.0},
+    {"id": 28, "name": "Convection High-Temp Curing Oven", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": true, "nominal_cycle_time": 58.0},
+    {"id": 29, "name": "Automated Deflectometry Surface QA", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": true, "nominal_cycle_time": 54.0},
+    {"id": 30, "name": "Automated Micro-Sander & Polish Robot", "zone": "Paint & Coat", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": false, "nominal_cycle_time": 53.0},
+    {"id": 31, "name": "Manual Quality Check & Decal Bay", "zone": "Paint & Coat", "sensor_rich": false, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 51.0},
+    {"id": 32, "name": "Paint-to-Final Automated Buffer", "zone": "Paint & Coat", "sensor_rich": false, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 49.0},
+
+    {"id": 33, "name": "Main Floor Wiring Harness Decking", "zone": "Final Assembly", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 54.0},
+    {"id": 34, "name": "Thermal Management Hose Routing", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": false, "has_temp": true, "nominal_cycle_time": 53.5},
+    {"id": 35, "name": "Integrated Cockpit & HUD Decking", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": false, "nominal_cycle_time": 55.0},
+    {"id": 36, "name": "Windshield & Rear Glass Automated Cell", "zone": "Final Assembly", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 52.0},
+    {"id": 37, "name": "Electric Drive Unit (EDU) Front Marriage", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 56.0},
+    {"id": 38, "name": "Electric Drive Unit (EDU) Rear Marriage", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 56.0},
+    {"id": 39, "name": "High-Voltage Battery Pack Mega-Fastening", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 57.0},
+    {"id": 40, "name": "Air Suspension & Control Arms Bolting", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": false, "nominal_cycle_time": 54.5},
+    {"id": 41, "name": "Brake Caliper & Rotor Automated Assembly", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": false, "nominal_cycle_time": 53.0},
+    {"id": 42, "name": "HV Dielectric & Leakage Safety Test", "zone": "Final Assembly", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": true, "nominal_cycle_time": 55.0},
+    {"id": 43, "name": "Fluid Automated Evac & Charge (Coolant/Brake)", "zone": "Final Assembly", "sensor_rich": true, "has_torque": false, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 53.0},
+    {"id": 44, "name": "Luxury Front & Rear Seat Robot Loading", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 54.0},
+    {"id": 45, "name": "Wheel & Aero-Cap Fastening Multi-Nut", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": false, "nominal_cycle_time": 51.5},
+    {"id": 46, "name": "Full ADAS LiDAR/Camera Optical Alignment", "zone": "Final Assembly", "sensor_rich": true, "has_torque": false, "has_vibration": false, "has_temp": true, "nominal_cycle_time": 56.5},
+    {"id": 47, "name": "Dyno Chassis Dyno & Regenerative Brake Test", "zone": "Final Assembly", "sensor_rich": true, "has_torque": true, "has_vibration": true, "has_temp": true, "nominal_cycle_time": 57.5},
+    {"id": 48, "name": "Final Automated Optical QA & Rollout", "zone": "Final Assembly", "sensor_rich": false, "has_torque": false, "has_vibration": false, "has_temp": false, "nominal_cycle_time": 52.0}
+  ],
+  "anomaly_scenarios_config": {
+    "gradual_drift_station_id": 10,
+    "gradual_drift_channel": "torque_nm",
+    "bearing_wear_station_id": 37,
+    "upstream_source_station_id": 4,
+    "downstream_manifest_station_id": 29,
+    "bottleneck_only_station_id": 19
+  }
+}

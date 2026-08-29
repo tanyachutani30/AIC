@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigitalTwin.ai — Assembly Line Predictive Digital Twin</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Style System -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-[#030712] text-slate-100 min-h-screen flex flex-col justify-between select-none">
+
+    <!-- Top Executive Header & Global Controls -->
+    <header class="w-full max-w-[1600px] mx-auto px-4 pt-4 z-30">
+        <div class="glass-panel px-6 py-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-4 shadow-2xl shadow-blue-950/20">
+            <!-- Brand -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-cubes-stacked text-white text-base"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-black text-base tracking-wider text-white">DigitalTwin<span class="text-blue-500">.ai</span></h1>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">Round 2 Prototype</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400">Accenture Innovation Challenge — Predictive Assembly Intelligence</p>
+                </div>
+            </div>
+
+            <!-- Live Plant Topology & WebSocket Indicator -->
+            <div class="hidden lg:flex items-center space-x-6 text-xs text-slate-300 font-medium">
+                <div class="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800">
+                    <span id="wsStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="wsStatusText" class="font-mono text-[11px]">Stream: Live WebSocket</span>
+                </div>
+                <div class="text-slate-500">|</div>
+                <div class="flex items-center gap-1.5 text-slate-300">
+                    <i class="fa-solid fa-industry text-purple-400 text-xs"></i>
+                    <span id="headerLineName" class="font-semibold">Body & Assembly Line Alpha</span>
+                </div>
+                <div class="text-slate-500">|</div>
+                <div class="font-mono text-slate-400 text-[11px]">
+                    <i class="fa-regular fa-clock mr-1 text-slate-500"></i><span id="headerSimTime">Tick #0</span>
+                </div>
+            </div>
+
+            <!-- Simulation Controls & Speed Toolbar -->
+            <div class="flex items-center space-x-3">
+                <!-- Line Config Switcher -->
+                <select id="lineConfigSelect" onchange="changeLineConfig(this.value)" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl px-2.5 py-1.5 outline-none focus:border-blue-500">
+                    <option value="config/line_config_default.json">Alpha Line (36 St, 72% Sensor)</option>
+                    <option value="config/line_config_sparse.json">Beta Legacy (30 St, 50% Sensor)</option>
+                    <option value="config/line_config_dense.json">Gamma Gigafactory (48 St, 90% Sensor)</option>
+                </select>
+
+                <!-- Speed Multiplier Buttons -->
+                <div class="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-800 space-x-1">
+                    <button onclick="setSimSpeed(1.0)" id="speed1Btn" class="px-2 py-1 rounded-lg text-xs font-bold text-white bg-blue-600 transition">1x</button>
+                    <button onclick="setSimSpeed(2.0)" id="speed2Btn" class="px-2 py-1 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition">2x</button>
+                    <button onclick="setSimSpeed(5.0)" id="speed5Btn" class="px-2 py-1 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition">5x</button>
+                    <button onclick="setSimSpeed(10.0)" id="speed10Btn" class="px-2 py-1 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition">10x</button>
+                    <button onclick="togglePause()" id="pauseBtn" class="px-2 py-1 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 transition" title="Pause / Play">
+                        <i id="pauseIcon" class="fa-solid fa-pause"></i>
+                    </button>
+                    <button onclick="stepSimulation()" class="px-2 py-1 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 transition" title="Step 1 Tick">
+                        <i class="fa-solid fa-forward-step"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3 Stakeholder Navigation Tabs -->
+        <nav class="flex items-center justify-center space-x-3 mt-3">
+            <button onclick="switchView('supervisor')" id="tabSupervisor" class="nav-tab active px-5 py-2 rounded-xl text-xs font-bold border border-slate-800 flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-tower-broadcast text-blue-400"></i> Floor Supervisor (Real-Time Ops)
+            </button>
+            <button onclick="switchView('plant_manager')" id="tabPlantManager" class="nav-tab px-5 py-2 rounded-xl text-xs font-bold border border-slate-800 text-slate-400 hover:text-white flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-chart-line text-purple-400"></i> Plant Manager (Planning & Trends)
+            </button>
+            <button onclick="switchView('leadership')" id="tabLeadership" class="nav-tab px-5 py-2 rounded-xl text-xs font-bold border border-slate-800 text-slate-400 hover:text-white flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-briefcase text-emerald-400"></i> Leadership (Business Case & ROI)
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Dynamic Application Workspace -->
+    <main class="w-full max-w-[1600px] mx-auto px-4 py-4 flex-grow flex flex-col">
+
+        <!-- ======================================================== -->
+        <!-- VIEW 1: FLOOR SUPERVISOR (REAL-TIME OPERATIONS) -->
+        <!-- ======================================================== -->
+        <section id="viewSupervisor" class="view-container active flex-grow space-y-4">
+            
+            <!-- Plant Summary KPI Bar -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="glass-card p-4 rounded-2xl border-l-4 border-l-blue-500 flex items-center justify-between">
+                    <div>
+                        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Line Throughput</p>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <span id="kpiThroughput" class="text-2xl font-black text-white font-mono">54.2</span>
+                            <span class="text-xs text-slate-400">UPH</span>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+                        <i class="fa-solid fa-gauge-high"></i>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 rounded-2xl border-l-4 border-l-emerald-500 flex items-center justify-between">
+                    <div>
+                        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Health Index</p>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <span id="kpiHealth" class="text-2xl font-black text-emerald-400 font-mono">98.4%</span>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 rounded-2xl border-l-4 border-l-purple-500 flex items-center justify-between">
+                    <div>
+                        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Line Backlog</p>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <span id="kpiBacklog" class="text-2xl font-black text-purple-400 font-mono">8</span>
+                            <span class="text-xs text-slate-400">Units in Queue</span>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 rounded-2xl border-l-4 border-l-rose-500 flex items-center justify-between">
+                    <div>
+                        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Predictive Alerts</p>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <span id="kpiAlertCount" class="text-2xl font-black text-rose-400 font-mono">1</span>
+                            <span class="text-xs text-rose-300">Action Required</span>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+                        <i class="fa-solid fa-triangle-exclamation animate-pulse"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assembly Line Flow Topology Grid + Alert / Prescriptive Action Card -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                
+                <!-- Main Line Topology Map (2 Cols) -->
+                <div class="glass-card p-5 rounded-2xl lg:col-span-2 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-diagram-project text-blue-400"></i>
+                            <h2 class="text-sm font-bold text-white">Live Station Flow Topology</h2>
+                            <span class="text-xs text-slate-400 font-mono">(Click station to inspect telemetry)</span>
+                        </div>
+                        <!-- Legend -->
+                        <div class="flex items-center gap-4 text-[10px] font-medium text-slate-400">
+                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Nominal</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span> Drift / Warning</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Defect / Bottleneck</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full border border-dashed border-slate-400"></span> Dark Proxy Station</span>
+                        </div>
+                    </div>
+
+                    <!-- Station Nodes Matrix (Grouped by Zones) -->
+                    <div id="stationNodesContainer" class="space-y-3 overflow-y-auto max-h-[560px] pr-1">
+                        <!-- Rendered by supervisor.js -->
+                    </div>
+                </div>
+
+                <!-- Right Column: Live Prescriptive AI Action & Station Waveform Drawer -->
+                <div class="space-y-4 flex flex-col">
+                    
+                    <!-- Prescriptive Action Recommendation Card -->
+                    <div id="aiActionCard" class="glass-card p-5 rounded-2xl border border-rose-500/50 bg-rose-950/15 flex flex-col justify-between glow-rose">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-robot"></i> TwinOps Prescriptive AI
+                                </span>
+                                <span id="alertTargetBadge" class="text-xs font-mono font-bold text-white">Station 08</span>
+                            </div>
+                            <h3 id="alertTitle" class="text-base font-bold text-white mb-2 leading-snug">Multi-Spindle Torque Creep Detected</h3>
+                            <p id="alertDesc" class="text-xs text-slate-300 mb-3 leading-relaxed">
+                                Torque has drifted +14.2% above nominal band. Isolation Forest flags emerging anomaly 42 mins prior to hard failure.
+                            </p>
+
+                            <!-- Explainability "Why?" Breakdown (Gini Feature Importances) -->
+                            <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 mb-3 space-y-1.5">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                                    <span>Root Cause Attribution (Feature Weight)</span>
+                                    <i class="fa-solid fa-magnifying-glass-chart text-purple-400"></i>
+                                </div>
+                                <div id="featureImportanceList" class="space-y-1 text-xs">
+                                    <!-- Rendered dynamically -->
+                                </div>
+                            </div>
+
+                            <div class="bg-emerald-950/30 border border-emerald-500/30 p-2.5 rounded-xl text-emerald-300 text-xs flex items-center gap-2 mb-3">
+                                <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+                                <span id="alertImpact">Impact: Prevents $90 assembly scrap penalty (Rule of Ten).</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-2 border-t border-slate-800">
+                            <button onclick="dispatchSupervisorAction()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 cursor-pointer">
+                                <i class="fa-solid fa-check-double"></i> Accept & Deploy to PLC
+                            </button>
+                            <button onclick="dismissCurrentAlert()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition cursor-pointer">
+                                Dismiss
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Station Live Waveform Drawer -->
+                    <div class="glass-card p-4 rounded-2xl flex-grow flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-wave-square text-blue-400 text-xs"></i>
+                                <span id="waveformStationTitle" class="text-xs font-bold text-white">Station 08 Waveform Telemetry</span>
+                            </div>
+                            <span id="waveformConfidenceBadge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">Direct Sensor</span>
+                        </div>
+                        <div class="h-44 w-full relative">
+                            <canvas id="stationWaveformChart"></canvas>
+                        </div>
+                        <div class="flex justify-between items-center text-[10px] text-slate-400 font-mono mt-1 pt-2 border-t border-slate-800">
+                            <span>-30 Ticks</span>
+                            <span id="waveformSummaryMetric" class="text-emerald-400 font-bold">Torque: 58.4 Nm | Vib: 1.34g</span>
+                            <span>Live</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- VIEW 2: PLANT MANAGER (PLANNING & TRENDS) -->
+        <!-- ======================================================== -->
+        <section id="viewPlantManager" class="view-container space-y-4">
+            
+            <!-- Trust & Model Validation Banner -->
+            <div class="glass-card p-6 rounded-2xl border border-purple-500/30 bg-gradient-to-r from-purple-950/20 via-slate-900 to-slate-900">
+                <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                                <i class="fa-solid fa-microchip"></i> Model Validation & Trust Layer
+                            </span>
+                            <span class="text-xs text-slate-400 font-mono">Held-out Test Line Instance</span>
+                        </div>
+                        <h2 class="text-2xl font-black text-white">Live Prediction Reliability & Tunable Alert Confidence</h2>
+                        <p class="text-xs text-slate-300 max-w-2xl mt-1">
+                            Scored continuously against ground truth outcomes. Tune the alert-confidence threshold below to observe real-time trade-offs between false-alarm suppression and early recall.
+                        </p>
+                    </div>
+
+                    <!-- Tunable Alert Threshold Slider -->
+                    <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 w-full lg:w-80">
+                        <div class="flex justify-between items-center text-xs font-bold mb-1.5">
+                            <span class="text-slate-300">Alert Confidence Threshold:</span>
+                            <span id="thresholdValueText" class="text-purple-400 font-mono text-sm">0.50</span>
+                        </div>
+                        <input id="thresholdSlider" type="range" min="0.10" max="0.90" step="0.05" value="0.50" oninput="updateConfidenceThreshold(this.value)" class="w-full cursor-pointer">
+                        <div class="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+                            <span>0.10 (High Recall)</span>
+                            <span>0.90 (Zero False Alarms)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rolling Performance Cards + SPC Comparison -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="glass-card p-4 rounded-2xl border-t-2 border-t-emerald-500">
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase">Defect Precision</p>
+                    <div class="text-3xl font-black text-emerald-400 font-mono my-1" id="pmPrecision">81.0%</div>
+                    <p class="text-[10px] text-slate-400">Ground truth verified on held-out line</p>
+                </div>
+                <div class="glass-card p-4 rounded-2xl border-t-2 border-t-blue-500">
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase">Defect Recall</p>
+                    <div class="text-3xl font-black text-blue-400 font-mono my-1" id="pmRecall">100.0%</div>
+                    <p class="text-[10px] text-slate-400">Zero undetected critical escapes</p>
+                </div>
+                <div class="glass-card p-4 rounded-2xl border-t-2 border-t-rose-500">
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase">False-Alarm Rate (FAR)</p>
+                    <div class="text-3xl font-black text-rose-400 font-mono my-1" id="pmFar">0.7%</div>
+                    <p class="text-[10px] text-slate-400">Prevents floor operator alarm fatigue</p>
+                </div>
+                <div class="glass-card p-4 rounded-2xl border-t-2 border-t-purple-500">
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase">LSTM Lead Time</p>
+                    <div class="text-3xl font-black text-purple-400 font-mono my-1" id="pmLeadTime">4.2 min</div>
+                    <p class="text-[10px] text-slate-400">Pre-takt bottleneck forecast lead</p>
+                </div>
+            </div>
+
+            <!-- Charts Row 1: Threshold Tradeoff Curve + SPC vs ML Benchmark -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                
+                <!-- Tradeoff Curve Chart -->
+                <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-purple-400 text-xs"></i>
+                            <h3 class="text-sm font-bold text-white">Alert Threshold Sensitivity Trade-off Curve</h3>
+                        </div>
+                        <span class="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">PR / FAR Tradeoff</span>
+                    </div>
+                    <div class="h-60 w-full">
+                        <canvas id="tradeoffChart"></canvas>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-2">
+                        Demonstrates why a static naive threshold fails: tuning allows balancing operator trust with early defect interception.
+                    </p>
+                </div>
+
+                <!-- DigitalTwin ML vs Traditional SPC Benchmark -->
+                <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-scale-balanced text-blue-400 text-xs"></i>
+                            <h3 class="text-sm font-bold text-white">Benchmark: DigitalTwin ML vs SPC 3-Sigma Control Limits</h3>
+                        </div>
+                        <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Empirical Proof</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs font-mono">
+                            <thead class="bg-slate-900/90 text-slate-400 uppercase text-[10px] border-b border-slate-800">
+                                <tr>
+                                    <th class="px-4 py-2.5">Evaluation Metric</th>
+                                    <th class="px-4 py-2.5 text-center text-blue-400">DigitalTwin.ai ML</th>
+                                    <th class="px-4 py-2.5 text-center text-rose-400">Naive SPC 3-Sigma</th>
+                                    <th class="px-4 py-2.5 text-right text-emerald-400">ML Uplift</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800 text-slate-300">
+                                <tr>
+                                    <td class="px-4 py-3 font-sans">Defect Detection Precision</td>
+                                    <td class="px-4 py-3 text-center font-bold text-white">81.0%</td>
+                                    <td class="px-4 py-3 text-center text-rose-400">0.6%</td>
+                                    <td class="px-4 py-3 text-right text-emerald-400">+80.4% pts</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-sans">Defect Catch Recall</td>
+                                    <td class="px-4 py-3 text-center font-bold text-white">100.0%</td>
+                                    <td class="px-4 py-3 text-center text-rose-400">13.6%</td>
+                                    <td class="px-4 py-3 text-right text-emerald-400">+86.4% pts</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-sans">False-Alarm Rate (FAR)</td>
+                                    <td class="px-4 py-3 text-center font-bold text-white">0.7%</td>
+                                    <td class="px-4 py-3 text-center text-rose-400">18.2%</td>
+                                    <td class="px-4 py-3 text-right text-emerald-400">26x Reduction</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-sans">Detection Lead Time</td>
+                                    <td class="px-4 py-3 text-center font-bold text-white">~42 min Early</td>
+                                    <td class="px-4 py-3 text-center text-rose-400">At Breakdown</td>
+                                    <td class="px-4 py-3 text-right text-emerald-400">Early Warning</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-2 pt-2 border-t border-slate-800 text-[10px] text-slate-400 flex items-center justify-between">
+                        <span>Tested across 600 ticks on held-out Seed 999</span>
+                        <span class="text-emerald-400 font-bold">Passed Anti-Overfitting Walk-Forward Split</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Charts Row 2: Recurring Bottleneck Stations & Root Cause Pareto -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                
+                <!-- Recurring Bottlenecks Leaderboard -->
+                <div class="glass-card p-5 rounded-2xl">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-ranking-star text-amber-400 text-xs"></i>
+                            <h3 class="text-sm font-bold text-white">Recurring Bottleneck Stations (Past 30 Days)</h3>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-xs">
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-6 rounded-lg bg-rose-500/20 text-rose-400 font-bold flex items-center justify-center font-mono">1</span>
+                                <div>
+                                    <div class="font-bold text-white">Station 14: E-Coat High-Temp Curing Oven</div>
+                                    <div class="text-[10px] text-slate-400">Paint & Coat Zone • Thermal dwell variance</div>
+                                </div>
+                            </div>
+                            <div class="text-right font-mono">
+                                <div class="text-rose-400 font-bold">11 Events</div>
+                                <div class="text-[10px] text-slate-400">Avg Queue: 8.4</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center font-mono">2</span>
+                                <div>
+                                    <div class="font-bold text-white">Station 28: Powertrain / Chassis Marriage</div>
+                                    <div class="text-[10px] text-slate-400">Final Assembly • Spindle bearing wear</div>
+                                </div>
+                            </div>
+                            <div class="text-right font-mono">
+                                <div class="text-amber-400 font-bold">7 Events</div>
+                                <div class="text-[10px] text-slate-400">Avg Queue: 5.2</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-400 font-bold flex items-center justify-center font-mono">3</span>
+                                <div>
+                                    <div class="font-bold text-white">Station 08: Door Hinge Multi-Spindle Torquing</div>
+                                    <div class="text-[10px] text-slate-400">Body Construction • Gradual torque drift</div>
+                                </div>
+                            </div>
+                            <div class="text-right font-mono">
+                                <div class="text-blue-400 font-bold">4 Events</div>
+                                <div class="text-[10px] text-slate-400">Avg Queue: 3.8</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Root Cause Pareto Breakdown -->
+                <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-emerald-400 text-xs"></i>
+                            <h3 class="text-sm font-bold text-white">Root Cause Pareto Attribution (Explainable AI)</h3>
+                        </div>
+                        <span class="text-[10px] font-mono text-slate-400">Random Forest Feature Importance</span>
+                    </div>
+                    <div class="h-52 w-full">
+                        <canvas id="paretoChart"></canvas>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2 text-center">
+                        Multi-variate Isolation Forest anomaly score & electrical power draw proxy explain >67% of line variance.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- VIEW 3: LEADERSHIP (BUSINESS CASE & ROI) -->
+        <!-- ======================================================== -->
+        <section id="viewLeadership" class="view-container space-y-6">
+            
+            <!-- Defeating the Rule of Ten Section -->
+            <div class="glass-card p-6 rounded-2xl border border-rose-500/30 bg-gradient-to-b from-rose-950/15 to-transparent">
+                <div class="max-w-4xl mx-auto text-center space-y-3 mb-8">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                        <i class="fa-solid fa-calculator"></i> Defect Economics Engine
+                    </span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-white">
+                        Defeating the <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-orange-500">"Rule of Ten"</span>
+                    </h2>
+                    <p class="text-slate-300 text-sm max-w-2xl mx-auto">
+                        In automotive manufacturing, the cost to resolve a defect escalates tenfold at each successive manufacturing gate. Intercepting defects at the assembly station rather than final QA is the core financial driver of DigitalTwin.ai.
+                    </p>
+                </div>
+
+                <!-- 4 Stage Funnel -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+                    <div class="glass-card p-5 rounded-2xl text-center border-b-2 border-b-emerald-500/50">
+                        <div class="text-xs font-bold text-slate-400 uppercase">Design Phase</div>
+                        <div class="text-3xl font-extrabold text-emerald-400 font-mono my-2">$1</div>
+                        <p class="text-[11px] text-slate-400">CAD tolerance optimization</p>
+                    </div>
+
+                    <div class="glass-card p-5 rounded-2xl text-center border-2 border-blue-500 shadow-lg shadow-blue-500/30 relative overflow-hidden bg-blue-950/20">
+                        <div class="absolute -right-8 -top-8 w-16 h-16 bg-blue-500/20 rounded-full blur-xl"></div>
+                        <div class="text-xs font-bold text-blue-300 uppercase">Assembly Level</div>
+                        <div class="text-3xl font-extrabold text-blue-400 font-mono my-2">$10</div>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-500/30 text-white border border-blue-400">DigitalTwin.ai Target</span>
+                    </div>
+
+                    <div class="glass-card p-5 rounded-2xl text-center border-b-4 border-b-amber-500">
+                        <div class="text-xs font-bold text-slate-400 uppercase">Final QA Inspection</div>
+                        <div class="text-3xl font-extrabold text-amber-400 font-mono my-2">$100</div>
+                        <p class="text-[11px] text-slate-400">Teardown & scrap cost</p>
+                    </div>
+
+                    <div class="glass-card p-5 rounded-2xl text-center border-b-8 border-b-rose-600 bg-rose-950/20">
+                        <div class="text-xs font-bold text-rose-300 uppercase">Post-Release Warranty</div>
+                        <div class="text-3xl font-extrabold text-rose-500 font-mono my-2">$1,000+</div>
+                        <p class="text-[11px] text-slate-400">Dealer recalls & brand hit</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Global Scalability Simulator & ROI Engine -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Scalability Parameter Controls (1 Col) -->
+                <div class="glass-card p-6 rounded-2xl space-y-5">
+                    <div>
+                        <h3 class="text-base font-bold text-white mb-1"><i class="fa-solid fa-sliders text-blue-400 mr-2"></i> Enterprise Scaling Simulator</h3>
+                        <p class="text-xs text-slate-400">Forecast annual return across global manufacturing footprint.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-slate-300">Global Assembly Plants:</span>
+                                <span id="scalePlantsVal" class="text-blue-400 font-mono font-bold">3 Plants</span>
+                            </div>
+                            <input id="scalePlantsSlider" type="range" min="1" max="15" value="3" oninput="updateLeadershipCalculations()" class="w-full cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-slate-300">Assembly Lines per Plant:</span>
+                                <span id="scaleLinesVal" class="text-purple-400 font-mono font-bold">2 Lines</span>
+                            </div>
+                            <input id="scaleLinesSlider" type="range" min="1" max="5" value="2" oninput="updateLeadershipCalculations()" class="w-full cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-slate-300">Average Sensor Coverage:</span>
+                                <span id="scaleSensorVal" class="text-emerald-400 font-mono font-bold">70% (Mixed)</span>
+                            </div>
+                            <input id="scaleSensorSlider" type="range" min="30" max="100" step="5" value="70" oninput="updateLeadershipCalculations()" class="w-full cursor-pointer">
+                            <p class="text-[10px] text-slate-400 mt-1">Our Dark Station Inference enables high ROI even at 30% sensor coverage.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projected Financial ROI Outputs (2 Cols) -->
+                <div class="glass-card p-6 rounded-2xl lg:col-span-2 flex flex-col justify-between space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                            <span class="text-xs text-emerald-400 font-bold uppercase tracking-wider">Projected Enterprise Impact</span>
+                            <h3 class="text-xl font-black text-white">Net Annual Financial Return</h3>
+                        </div>
+                        <div class="text-right">
+                            <span id="roiTotalAnnual" class="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300 font-mono">$14,280,000</span>
+                            <div class="text-[11px] text-slate-400">Total annual savings / year</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
+                            <div class="text-[10px] text-slate-400 uppercase font-bold">Scrap Avoided (Rule of 10)</div>
+                            <div id="roiScrapDollars" class="text-2xl font-bold text-white font-mono my-1">$3,840,000</div>
+                            <div class="text-[10px] text-emerald-400"><i class="fa-solid fa-arrow-trend-up"></i> $90/unit saved</div>
+                        </div>
+
+                        <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
+                            <div class="text-[10px] text-slate-400 uppercase font-bold">Downtime Prevention</div>
+                            <div id="roiDowntimeDollars" class="text-2xl font-bold text-white font-mono my-1">$10,440,000</div>
+                            <div class="text-[10px] text-purple-400"><i class="fa-solid fa-clock-rotate-left"></i> ~870 hours saved</div>
+                        </div>
+
+                        <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
+                            <div class="text-[10px] text-slate-400 uppercase font-bold">Payback Period</div>
+                            <div class="text-2xl font-bold text-emerald-400 font-mono my-1">3.2 Months</div>
+                            <div class="text-[10px] text-slate-400">Hardware-free deployment</div>
+                        </div>
+                    </div>
+
+                    <!-- 30-60-90 Day Phased Rollout Roadmap -->
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <div class="text-xs font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-road text-blue-400"></i> Phased Enterprise Rollout Roadmap
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                            <div class="p-3 rounded-lg bg-slate-900 border-l-2 border-l-blue-500">
+                                <div class="text-blue-400 font-bold text-[11px]">Days 1–30: Zero-Disruption Baseline</div>
+                                <p class="text-slate-300 text-[11px] mt-1">Connect non-invasive proxy telemetry (RFID dwell + power draw). Establish digital plant graph.</p>
+                            </div>
+                            <div class="p-3 rounded-lg bg-slate-900 border-l-2 border-l-purple-500">
+                                <div class="text-purple-400 font-bold text-[11px]">Days 31–60: Shadow Predictive Mode</div>
+                                <p class="text-slate-300 text-[11px] mt-1">Train Isolation Forest & LSTM on facility data. Calibrate confidence threshold with floor teams.</p>
+                            </div>
+                            <div class="p-3 rounded-lg bg-slate-900 border-l-2 border-l-emerald-500">
+                                <div class="text-emerald-400 font-bold text-[11px]">Days 61–90: Autonomous PLC Loop</div>
+                                <p class="text-slate-300 text-[11px] mt-1">Enable 1-click PLC prescriptive actions. Scale topology to secondary lines and global plants.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer Status & Action Overlay Toast -->
+    <footer class="w-full max-w-[1600px] mx-auto px-4 pb-4">
+        <div class="glass-panel px-6 py-2.5 rounded-2xl flex items-center justify-between text-xs text-slate-400">
+            <div class="flex items-center space-x-4">
+                <span>Accenture Innovation Challenge 2026</span>
+                <span class="text-slate-600">|</span>
+                <span class="text-slate-400">Architecture: FastAPI + PyTorch LSTM + Isolation Forest + Random Forest</span>
+            </div>
+            <div class="flex items-center space-x-3 font-mono text-[11px]">
+                <span class="text-emerald-400"><i class="fa-solid fa-shield-check mr-1"></i> Data Confidence Engine Active</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- PLC Execution Confirmation Toast -->
+    <div id="plcToast" class="fixed bottom-16 right-8 bg-slate-900 border border-emerald-500/80 px-5 py-4 rounded-2xl shadow-2xl shadow-emerald-500/30 flex items-center gap-4 z-50">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <div>
+            <h4 class="text-sm font-bold text-white">Prescriptive Action Deployed</h4>
+            <p id="plcToastDesc" class="text-xs text-slate-300">Command transmitted to physical PLC memory register.</p>
+        </div>
+    </div>
+
+    <!-- Frontend JS Modules -->
+    <script src="/static/js/components/charts.js"></script>
+    <script src="/static/js/views/supervisor.js"></script>
+    <script src="/static/js/views/plant_manager.js"></script>
+    <script src="/static/js/views/leadership.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

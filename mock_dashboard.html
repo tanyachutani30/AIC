@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Chain Resilience & Operations Control | Pitch Deck</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030712;
+            color: #f3f4f6;
+            overflow: hidden;
+        }
+        .glass-card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.5); }
+        }
+        .glow-effect {
+            animation: pulseGlow 4s infinite;
+        }
+        .flow-line-h {
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(168,85,247,0.2), rgba(168,85,247,0.8), rgba(168,85,247,0.2));
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col justify-between items-center p-4 md:p-6 select-none">
+
+    <!-- Top Header Navigation / Brand -->
+    <header class="w-full max-w-7xl flex items-center justify-between glass-panel px-6 py-3 rounded-2xl z-20">
+        <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                <i class="fa-solid fa-cubes text-white text-sm"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-sm tracking-wide text-white">TwinOps<span class="text-blue-500">.ai</span></h1>
+                <p class="text-[10px] text-slate-400">Enterprise Operations Control</p>
+            </div>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-6 text-xs font-medium text-slate-300">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle text-emerald-400 text-[8px] animate-pulse"></i> Plant Graph: Online</span>
+            <span class="text-slate-500">|</span>
+            <span>3-Min Executive Pitch</span>
+        </div>
+
+        <div class="flex items-center space-x-2">
+            <button onclick="goToSlide(0)" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition cursor-pointer">Start Over</button>
+            <button onclick="goToSlide(8)" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white transition shadow-md shadow-blue-600/30 cursor-pointer">Summary</button>
+        </div>
+    </header>
+
+    <!-- Main Presentation Workspace -->
+    <main class="w-full max-w-7xl flex-grow flex items-center justify-center my-4 relative overflow-hidden">
+        
+        <div class="w-full h-full relative flex flex-col justify-center">
+
+            <!-- SLIDE 1: THE HOOK & REAL WORLD PAIN -->
+            <section class="slide active h-full flex-col justify-center" id="slide-0">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center h-full max-w-6xl mx-auto">
+                    <div class="space-y-6">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                            <i class="fa-solid fa-triangle-exclamation"></i> The Problem
+                        </span>
+                        <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
+                            One Missed Load. <br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-orange-500">Total Line Halt.</span>
+                        </h2>
+                        <p class="text-lg text-slate-400 max-w-xl">
+                            Manufacturing is paralyzed by reactive silos. When station data isn't unified, minor downstream delays rapidly escalate into catastrophic million-dollar bottlenecks.
+                        </p>
+                        <div class="pt-4 flex gap-4">
+                            <button onclick="nextSlide()" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-white shadow-lg shadow-blue-600/30 transition flex items-center gap-2 cursor-pointer">
+                                See Research & Solution <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="relative">
+                        <div class="absolute -left-8 -top-8 glass-card p-4 rounded-xl border-l-4 border-l-rose-500 shadow-2xl z-20 w-72 transform -rotate-2 hover:rotate-0 transition">
+                            <div class="text-[10px] text-rose-400 font-bold mb-1 uppercase tracking-wider">Reuters • Live</div>
+                            <p class="text-sm font-semibold text-white">Toyota halts operations at 14 Japan factories due to system failure.</p>
+                            <div class="mt-2 text-xs text-slate-400"><i class="fa-solid fa-clock mr-1"></i> Aug 29, 2023</div>
+                        </div>
+
+                        <div class="absolute right-0 bottom-12 glass-card p-4 rounded-xl border-l-4 border-l-orange-500 shadow-2xl z-20 w-80 transform rotate-3 hover:rotate-0 transition">
+                            <div class="text-[10px] text-orange-400 font-bold mb-1 uppercase tracking-wider">Supply Chain Dive</div>
+                            <p class="text-sm font-semibold text-white">Boeing sees big drop in output after supply bottlenecks and safety stops.</p>
+                        </div>
+
+                        <div class="aspect-square rounded-full border border-slate-800 flex items-center justify-center relative bg-slate-900/50">
+                            <div class="w-3/4 h-3/4 rounded-full border border-slate-700 animate-[spin_60s_linear_infinite] flex items-center justify-center">
+                                <i class="fa-solid fa-gears text-6xl text-slate-700"></i>
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-tr from-rose-500/10 to-transparent rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 2: RESEARCH & EMPIRICAL VALIDATION -->
+            <section class="slide h-full flex-col justify-center" id="slide-1">
+                <div class="max-w-5xl mx-auto w-full space-y-8">
+                    <div class="flex justify-between items-start">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <i class="fa-solid fa-book-open"></i> Research & Case Validation
+                        </span>
+                        <div class="text-xs text-slate-400 font-mono">MIT Center for Transportation & Logistics / Stanford SC Lab</div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="text-3xl md:text-4xl font-extrabold text-white">Empirical Evidence: The Power of Digital Graph Twins</h2>
+                        <p class="text-slate-300 text-base max-w-3xl">
+                            Peer-reviewed studies on complex manufacturing networks demonstrate that replacing reactive thresholds with real-time digital graph modeling drastically mitigates operational ripple effects.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="glass-card p-6 rounded-2xl border-t-2 border-t-emerald-500 flex flex-col justify-between">
+                            <div>
+                                <div class="text-emerald-400 font-bold text-xs uppercase tracking-wider mb-1">MIT CTL Study (2025)</div>
+                                <h3 class="text-lg font-bold text-white mb-2">Bullwhip Suppression</h3>
+                                <p class="text-xs text-slate-300">Graph-based predictive routing reduces downstream variance amplification across multi-tier supplier networks by <strong class="text-emerald-400">34%</strong>.</p>
+                            </div>
+                            <div class="mt-4 pt-3 border-t border-slate-800 text-[10px] text-slate-400 font-mono">Source: Journal of Operations Management</div>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl border-t-2 border-t-blue-500 flex flex-col justify-between">
+                            <div>
+                                <div class="text-blue-400 font-bold text-xs uppercase tracking-wider mb-1">Stanford Supply Chain Lab</div>
+                                <h3 class="text-lg font-bold text-white mb-2">Early Anomaly Detection</h3>
+                                <p class="text-xs text-slate-300">Combining proxy sensor inference with machine learning cuts undetected defect propagation windows from hours down to <strong class="text-blue-400">under 4 minutes</strong>.</p>
+                            </div>
+                            <div class="mt-4 pt-3 border-t border-slate-800 text-[10px] text-slate-400 font-mono">Source: Stanford Industrial AI Reports</div>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl border-t-2 border-t-purple-500 flex flex-col justify-between">
+                            <div>
+                                <div class="text-purple-400 font-bold text-xs uppercase tracking-wider mb-1">Industry Benchmark</div>
+                                <h3 class="text-lg font-bold text-white mb-2">Autonomous Recovery</h3>
+                                <p class="text-xs text-slate-300">Automated workforce re-allocation during emerging bottlenecks prevents <strong class="text-purple-400">>80%</strong> of unneeded safety stops.</p>
+                            </div>
+                            <div class="mt-4 pt-3 border-t border-slate-800 text-[10px] text-slate-400 font-mono">Source: Global Automotive Operations Index</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 3: THE INNOVATION ARCHITECTURE -->
+            <section class="slide h-full flex-col justify-between" id="slide-2">
+                <div class="flex justify-between items-start mb-8">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                        <i class="fa-solid fa-diagram-project"></i> Proposed Solution
+                    </span>
+                    <h2 class="text-3xl font-bold text-white">The DigitalTwin<span class="text-purple-400">.ai</span> Engine</h2>
+                </div>
+
+                <div class="relative w-full max-w-6xl mx-auto flex-grow flex items-center">
+                    <div class="flow-line-h"></div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10 w-full">
+                        <div class="glass-card p-6 rounded-2xl border-t-4 border-t-purple-600 flex flex-col h-full bg-slate-900/90">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold text-purple-300">1. Modeling the Path</h3>
+                                <i class="fa-solid fa-network-wired text-purple-500 text-xl"></i>
+                            </div>
+                            <p class="text-xs text-slate-400 mb-3 italic">Mapping the physical line to a digital graph model.</p>
+                            <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 marker:text-purple-500">
+                                <li><strong>Nodes & Edges:</strong> Stations act as nodes, conveyors as edges.</li>
+                                <li><strong>Targeted Focus:</strong> Tracking critical junctures to reduce compute overhead.</li>
+                            </ul>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl border-t-4 border-t-purple-500 flex flex-col h-full bg-slate-900/90">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold text-purple-300">2. Capturing Data</h3>
+                                <i class="fa-solid fa-satellite-dish text-purple-400 text-xl"></i>
+                            </div>
+                            <p class="text-xs text-slate-400 mb-3 italic">Bridging physical actions and digital data.</p>
+                            <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 marker:text-purple-400">
+                                <li><strong>Active IoT:</strong> Smart tools push real-time data via MQTT.</li>
+                                <li><strong>Proxy Metrics:</strong> Tracking power draw or RFID dwell times.</li>
+                            </ul>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl border-t-4 border-t-fuchsia-500 flex flex-col h-full bg-slate-900/90">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold text-fuchsia-300">3. Prediction</h3>
+                                <i class="fa-solid fa-brain text-fuchsia-400 text-xl"></i>
+                            </div>
+                            <p class="text-xs text-slate-400 mb-3 italic">Shifting from visualization to prediction.</p>
+                            <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 marker:text-fuchsia-400">
+                                <li><strong>Bottlenecks:</strong> ARIMA and GNNs predict queue pile-ups.</li>
+                                <li><strong>Defects:</strong> XGBoost calculates live passing/failing probability.</li>
+                            </ul>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl border-t-4 border-t-fuchsia-400 flex flex-col h-full bg-slate-900/90">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold text-fuchsia-300">4. Auto Rework</h3>
+                                <i class="fa-solid fa-robot text-fuchsia-300 text-xl"></i>
+                            </div>
+                            <p class="text-xs text-slate-400 mb-3 italic">Autonomous execution to defeat the Rule of Ten.</p>
+                            <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 marker:text-fuchsia-300">
+                                <li><strong>Instant Reroute:</strong> Diverts high-risk parts to local rework.</li>
+                                <li>Avoids the 10x penalty of final QA discovery.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 4: DASHBOARD DEEP DIVE 1 -->
+            <section class="slide h-full flex-col" id="slide-3">
+                <div class="flex justify-between items-start mb-6">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        <i class="fa-solid fa-display"></i> UI Deep Dive 1/4
+                    </span>
+                    <h2 class="text-2xl font-bold text-white">Live Plant Dashboard: Top-Down Visibility</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
+                    <div class="glass-card rounded-xl border border-slate-700/50 p-5 flex flex-col justify-between col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-sm font-bold text-white"><i class="fa-solid fa-industry text-blue-400 mr-2"></i> Assembly Line 4 Topology</h3>
+                            <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-mono">All Stations Active</span>
+                        </div>
+                        <div class="grid grid-cols-4 gap-3">
+                            <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-700">
+                                <div class="text-[10px] text-slate-400">Station 01</div>
+                                <div class="text-sm font-bold text-white mt-1">Chassis Weld</div>
+                                <div class="text-[10px] text-emerald-400 mt-2"><i class="fa-solid fa-check"></i> 99.4% Eff</div>
+                            </div>
+                            <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-700">
+                                <div class="text-[10px] text-slate-400">Station 02</div>
+                                <div class="text-sm font-bold text-white mt-1">Powertrain</div>
+                                <div class="text-[10px] text-emerald-400 mt-2"><i class="fa-solid fa-check"></i> 98.1% Eff</div>
+                            </div>
+                            <div class="bg-slate-900/80 p-3 rounded-lg border border-rose-500/50 bg-rose-950/10">
+                                <div class="text-[10px] text-rose-400 font-bold">Station 03 (Bottleneck)</div>
+                                <div class="text-sm font-bold text-white mt-1">Paint & Coat</div>
+                                <div class="text-[10px] text-rose-400 mt-2"><i class="fa-solid fa-triangle-exclamation"></i> 76.2% Eff</div>
+                            </div>
+                            <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-700">
+                                <div class="text-[10px] text-slate-400">Station 04</div>
+                                <div class="text-sm font-bold text-white mt-1">Final Assembly</div>
+                                <div class="text-[10px] text-emerald-400 mt-2"><i class="fa-solid fa-check"></i> 95.8% Eff</div>
+                            </div>
+                        </div>
+                        <div class="bg-slate-950/60 p-4 rounded-lg mt-4 border border-slate-800 text-xs text-slate-300">
+                            <strong class="text-white">Graph Insight:</strong> Station 03 is accumulating an 11-unit queue due to curing temperature dwell time variations.
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-xl border border-slate-700/50 p-5 flex flex-col justify-between">
+                        <h3 class="text-sm font-bold text-white mb-2"><i class="fa-solid fa-gauge text-purple-400 mr-2"></i> Live Throughput</h3>
+                        <div class="text-center my-auto">
+                            <div class="text-5xl font-extrabold text-white font-mono">48.2</div>
+                            <div class="text-xs text-slate-400 mt-1">Units / Hour (Target: 55)</div>
+                            <div class="w-full bg-slate-800 h-2 rounded-full mt-4 overflow-hidden">
+                                <div class="bg-blue-500 h-full rounded-full" style="width: 87.6%;"></div>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-slate-400 text-center mt-2">Updated live via MQTT broker telemetry</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 5: DASHBOARD DEEP DIVE 2 (ANOMALY DETECTION) -->
+            <section class="slide h-full flex-col" id="slide-4">
+                <div class="flex justify-between items-start mb-6">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        <i class="fa-solid fa-display"></i> UI Deep Dive 2/4
+                    </span>
+                    <h2 class="text-2xl font-bold text-white">Anomaly Detection & Proxy Sensor Inference</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
+                    <div class="glass-card rounded-xl border border-slate-700/50 p-5 flex flex-col col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-sm font-bold text-white"><i class="fa-solid fa-chart-line text-emerald-400 mr-2"></i> Spindle Motor Vibration & Power Draw (Station 02)</h3>
+                            <span class="text-xs font-mono text-emerald-400">Normal Band: 4.2A - 5.8A</span>
+                        </div>
+                        <div class="flex-grow bg-slate-950/80 rounded-lg p-4 border border-slate-800 flex flex-col justify-end relative overflow-hidden">
+                            <div class="absolute inset-0 flex items-center px-4">
+                                <div class="w-full h-24 border-b border-dashed border-slate-700 relative">
+                                    <svg class="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 500 100">
+                                        <path d="M0,50 Q50,40 100,55 T200,45 T300,70 T400,20 T500,48" fill="none" stroke="#3b82f6" stroke-width="2.5"></path>
+                                        <path d="M350,60 Q370,10 400,20 T430,75" fill="none" stroke="#f43f5e" stroke-width="3" class="animate-pulse"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="relative z-10 flex justify-between text-[10px] text-slate-400 font-mono mt-auto">
+                                <span>-10m</span>
+                                <span class="text-rose-400 font-bold">Anomaly Detected (Bearing Micro-Fracture)</span>
+                                <span>Live</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-xl border border-rose-500/30 p-5 flex flex-col justify-between bg-rose-950/10">
+                        <div>
+                            <div class="text-xs text-rose-400 font-bold uppercase tracking-wider mb-1"><i class="fa-solid fa-triangle-exclamation"></i> Predictive Alert</div>
+                            <h3 class="text-base font-bold text-white mb-2">Bearing Failure Imminent</h3>
+                            <p class="text-xs text-slate-300">Proxy sensor vibration harmonics indicate spindle bearing degradation on Station 02.</p>
+                        </div>
+                        <div class="bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-2 text-xs">
+                            <div class="flex justify-between"><span class="text-slate-400">Time to failure:</span> <span class="text-white font-mono">~42 mins</span></div>
+                            <div class="flex justify-between"><span class="text-slate-400">Confidence:</span> <span class="text-emerald-400 font-mono">94.7%</span></div>
+                        </div>
+                        <div class="text-[10px] text-slate-400 text-center">Auto-scheduled maintenance window during shift change.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 6: DASHBOARD DEEP DIVE 3 (GRAPH TOPOLOGY) -->
+            <section class="slide h-full flex-col" id="slide-5">
+                <div class="flex justify-between items-start mb-6">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        <i class="fa-solid fa-display"></i> UI Deep Dive 3/4
+                    </span>
+                    <h2 class="text-2xl font-bold text-white">Graph Topology & Bullwhip Suppression</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
+                    <div class="glass-card rounded-xl border border-slate-700/50 p-5 flex flex-col col-span-2 justify-between">
+                        <h3 class="text-sm font-bold text-white mb-2"><i class="fa-solid fa-project-diagram text-purple-400 mr-2"></i> Supply Chain Multi-Tier Graph Mapping</h3>
+                        <div class="bg-slate-950/80 rounded-lg p-6 border border-slate-800 flex items-center justify-center relative flex-grow">
+                            <div class="flex items-center justify-between w-full max-w-lg relative">
+                                <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-dashed border-purple-500/40"></div></div>
+                                <div class="bg-slate-900 border border-purple-500 px-4 py-3 rounded-xl z-10 text-center shadow-lg shadow-purple-500/20">
+                                    <div class="text-[10px] text-purple-400 font-bold">Tier 3</div>
+                                    <div class="text-xs text-white font-semibold">Raw Alloy</div>
+                                </div>
+                                <div class="bg-slate-900 border border-purple-500 px-4 py-3 rounded-xl z-10 text-center shadow-lg shadow-purple-500/20">
+                                    <div class="text-[10px] text-purple-400 font-bold">Tier 2</div>
+                                    <div class="text-xs text-white font-semibold">Stamping</div>
+                                </div>
+                                <div class="bg-slate-900 border border-blue-500 px-4 py-3 rounded-xl z-10 text-center shadow-lg shadow-blue-500/20">
+                                    <div class="text-[10px] text-blue-400 font-bold">Tier 1</div>
+                                    <div class="text-xs text-white font-semibold">Plant Assembly</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-slate-400 mt-3">Graph routing dampens demand signal amplification (Bullwhip Effect) across sub-tier suppliers.</div>
+                    </div>
+
+                    <div class="glass-card rounded-xl border border-slate-700/50 p-5 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-sm font-bold text-white mb-2"><i class="fa-solid fa-shield-halved text-blue-400 mr-2"></i> Bullwhip Suppression</h3>
+                            <p class="text-xs text-slate-300">MIT CTL research demonstrates 34% variance reduction via predictive graph routing.</p>
+                        </div>
+                        <div class="space-y-3 my-auto">
+                            <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                <div class="text-[10px] text-slate-400">Traditional Variance</div>
+                                <div class="text-lg font-bold text-rose-400 font-mono">± 28.4%</div>
+                            </div>
+                            <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                                <div class="text-[10px] text-slate-400">TwinOps Graph Variance</div>
+                                <div class="text-lg font-bold text-emerald-400 font-mono">± 4.1%</div>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-slate-400 text-center">Optimized inventory buffering</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 7: DASHBOARD DEEP DIVE 4 (WHAT-IF SIMULATOR) -->
+            <section class="slide h-full flex-col" id="slide-6">
+                <div class="flex justify-between items-start mb-6">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        <i class="fa-solid fa-flask"></i> UI Deep Dive 4/4
+                    </span>
+                    <h2 class="text-2xl font-bold text-white">What-If Simulator & Autonomous Action</h2>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+                    <div class="glass-card rounded-xl border border-slate-700/50 p-5 flex flex-col col-span-2">
+                        <h3 class="text-sm font-bold text-white mb-1"><i class="fa-solid fa-vial text-purple-400 mr-2"></i> What-If Simulator</h3>
+                        <p class="text-[10px] text-slate-400 mb-4">Test interventions in the digital twin before acting on the physical floor.</p>
+                        
+                        <div class="bg-slate-900 border border-slate-700 rounded-lg p-4 mb-4">
+                            <label class="text-xs text-slate-400 block mb-2">Select Scenario to Test:</label>
+                            <select id="scenarioSelect" class="w-full bg-slate-800 border border-slate-600 text-white text-sm rounded px-3 py-2 outline-none focus:border-purple-500">
+                                <option value="0">Move 1 operator from Station 8 → Station 7</option>
+                                <option value="1">Reduce line speed by 10% for next 30 mins</option>
+                                <option value="2">Bypass Station 7 for non-critical cosmetic trims</option>
+                            </select>
+                            <button id="runSimBtn" onclick="runSimulation()" class="mt-4 w-full bg-slate-700 hover:bg-purple-600 text-white font-bold py-2 rounded text-sm transition flex justify-center items-center gap-2 border border-slate-600 hover:border-purple-500 cursor-pointer">
+                                <i class="fa-solid fa-play text-xs"></i> Run Simulation
+                            </button>
+                        </div>
+
+                        <div class="flex-grow overflow-hidden border border-emerald-500/30 rounded-lg bg-slate-950/50 relative">
+                            <div id="simLoading" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center text-purple-400 text-xs font-bold gap-2 hidden">
+                                <i class="fa-solid fa-spinner animate-spin"></i> Running Monte Carlo Graph Simulation...
+                            </div>
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-900 border-b border-slate-800 text-slate-400 uppercase">
+                                    <tr>
+                                        <th class="px-4 py-2">Metric</th>
+                                        <th class="px-4 py-2 text-center">Current</th>
+                                        <th class="px-4 py-2 text-center text-emerald-400">Simulated</th>
+                                        <th class="px-4 py-2 text-right">Impact</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="simTableBody" class="text-slate-300 divide-y divide-slate-800 font-mono">
+                                    <tr>
+                                        <td class="px-4 py-3 font-sans">Throughput (cars/hr)</td>
+                                        <td class="px-4 py-3 text-center">48</td>
+                                        <td id="simThroughput" class="px-4 py-3 text-center text-white transition-all duration-300">56</td>
+                                        <td id="simThroughputImpact" class="px-4 py-3 text-right text-emerald-400"><i class="fa-solid fa-arrow-up text-[10px]"></i> 17%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 font-sans">Station 7 Queue (units)</td>
+                                        <td class="px-4 py-3 text-center text-rose-400">12</td>
+                                        <td id="simQueue" class="px-4 py-3 text-center text-white transition-all duration-300">3</td>
+                                        <td id="simQueueImpact" class="px-4 py-3 text-right text-emerald-400"><i class="fa-solid fa-arrow-down text-[10px]"></i> 75%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 font-sans">Downstream Delay (min)</td>
+                                        <td class="px-4 py-3 text-center text-rose-400">18</td>
+                                        <td id="simDelay" class="px-4 py-3 text-center text-white transition-all duration-300">4</td>
+                                        <td id="simDelayImpact" class="px-4 py-3 text-right text-emerald-400"><i class="fa-solid fa-arrow-down text-[10px]"></i> 78%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-xl border border-emerald-500/50 p-5 flex flex-col bg-emerald-950/10 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-transparent"></div>
+                        <div class="relative z-10 flex flex-col h-full">
+                            <h3 class="text-sm font-bold text-emerald-400 mb-4 uppercase tracking-wide flex items-center gap-2">
+                                <i class="fa-solid fa-robot"></i> TwinOps AI Action
+                            </h3>
+                            
+                            <div class="bg-slate-900 border border-emerald-500/30 rounded-lg p-4 mb-auto">
+                                <div id="aiActionTitle" class="text-white font-bold text-sm mb-2">Execute Optimal Reroute</div>
+                                <p id="aiActionDesc" class="text-xs text-slate-300 mb-3">AI recommends moving 1 operator from Station 8 to Station 7 immediately to clear the 12-car backlog.</p>
+                                
+                                <div class="bg-emerald-900/30 text-emerald-300 text-[10px] p-2 rounded border border-emerald-500/20 mb-4">
+                                    <strong>Why?</strong> Station 8 has +41% excess capacity available right now.
+                                </div>
+
+                                <button onclick="executeAction()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg text-sm transition shadow-lg shadow-emerald-600/20 cursor-pointer">
+                                    Accept & Execute Action
+                                </button>
+                                <div id="actionStatus" class="text-center mt-2 text-[10px] text-slate-400 font-mono hidden">✓ Action deployed to physical PLC controller.</div>
+                            </div>
+
+                            <div class="mt-4 pt-4 border-t border-slate-700/50 text-[10px] text-slate-400 flex items-center justify-center gap-4">
+                                <span class="flex flex-col items-center"><i class="fa-solid fa-gear text-slate-500 mb-1"></i> Act</span>
+                                <i class="fa-solid fa-chevron-right text-slate-600"></i>
+                                <span class="flex flex-col items-center"><i class="fa-regular fa-eye text-slate-500 mb-1"></i> Observe</span>
+                                <i class="fa-solid fa-chevron-right text-slate-600"></i>
+                                <span class="flex flex-col items-center"><i class="fa-solid fa-rotate text-emerald-400 mb-1"></i> Learn</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 8: THE RULE OF TEN -->
+            <section class="slide h-full flex-col justify-between" id="slide-7">
+                <div class="flex justify-between items-start">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                        <i class="fa-solid fa-calculator"></i> Defect Economics
+                    </span>
+                </div>
+
+                <div class="my-auto space-y-8 max-w-5xl mx-auto w-full">
+                    <div class="text-center space-y-3">
+                        <h2 class="text-4xl md:text-5xl font-extrabold text-white">Defeating the <span class="text-rose-500">"Rule of Ten"</span></h2>
+                        <p class="text-slate-300 text-lg max-w-3xl mx-auto">
+                            The cost to fix a defect increases tenfold at each subsequent stage. Early detection via our TwinOps AI isn't just a quality metric; it's a financial imperative.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-4 mt-8">
+                        <div class="glass-card p-6 rounded-2xl flex flex-col items-center text-center border-b-2 border-b-emerald-500/50">
+                            <h4 class="text-sm font-bold text-slate-300 uppercase tracking-wide">Design Phase</h4>
+                            <div class="text-4xl font-extrabold text-emerald-400 font-mono my-2">$1</div>
+                            <p class="text-[10px] text-slate-500">Cost to prevent</p>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl flex flex-col items-center text-center border-b-2 border-b-blue-500/50 relative">
+                            <div class="absolute inset-0 border-2 border-blue-500/50 rounded-2xl shadow-[0_0_15px_rgba(59,130,246,0.3)] pointer-events-none"></div>
+                            <h4 class="text-sm font-bold text-white uppercase tracking-wide">Assembly Level</h4>
+                            <div class="text-4xl font-extrabold text-blue-400 font-mono my-2">$10</div>
+                            <p class="text-[10px] text-slate-400 font-bold bg-blue-500/20 px-2 py-1 rounded">TwinOps Target Zone</p>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl flex flex-col items-center text-center border-b-4 border-b-amber-500">
+                            <h4 class="text-sm font-bold text-slate-300 uppercase tracking-wide">Final QA Stage</h4>
+                            <div class="text-4xl font-extrabold text-amber-400 font-mono my-2">$100</div>
+                            <p class="text-[10px] text-slate-500">Finished goods scrap</p>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl flex flex-col items-center text-center border-b-8 border-b-red-600 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-red-600/10"></div>
+                            <h4 class="text-sm font-bold text-slate-300 uppercase tracking-wide z-10">Post-Release</h4>
+                            <div class="text-4xl font-extrabold text-red-500 font-mono my-2 z-10">$1K+</div>
+                            <p class="text-[10px] text-slate-500 z-10">Recall & brand damage</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 9: VALUE REALIZATION & CLOSING -->
+            <section class="slide h-full flex-col justify-center" id="slide-8">
+                <div class="max-w-4xl mx-auto w-full space-y-12">
+                    <div class="text-center space-y-4">
+                        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 shadow-[0_0_30px_rgba(59,130,246,0.5)] mb-4">
+                            <i class="fa-solid fa-rocket text-4xl text-white"></i>
+                        </div>
+                        <h2 class="text-4xl md:text-5xl font-extrabold text-white">From Reactive Firefighting <br>to Predictive Profitability</h2>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-6">
+                        <div class="glass-card p-6 rounded-2xl text-center border-t-2 border-t-blue-500">
+                            <div class="text-blue-400 text-3xl mb-2"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                            <div class="text-3xl font-extrabold text-white font-mono mb-1">5-12%</div>
+                            <div class="text-sm text-slate-400">Throughput Increase</div>
+                        </div>
+                        <div class="glass-card p-6 rounded-2xl text-center border-t-2 border-t-emerald-500">
+                            <div class="text-emerald-400 text-3xl mb-2"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                            <div class="text-3xl font-extrabold text-white font-mono mb-1">20-30%</div>
+                            <div class="text-sm text-slate-400">Less Unplanned Downtime</div>
+                        </div>
+                        <div class="glass-card p-6 rounded-2xl text-center border-t-2 border-t-purple-500">
+                            <div class="text-purple-400 text-3xl mb-2"><i class="fa-solid fa-sack-dollar"></i></div>
+                            <div class="text-3xl font-extrabold text-white font-mono mb-1">Millions</div>
+                            <div class="text-sm text-slate-400">Savings per plant/year</div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-12">
+                        <button onclick="goToSlide(0)" class="px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 font-bold text-white text-lg shadow-lg hover:shadow-purple-500/25 hover:scale-105 transition cursor-pointer">
+                            Deploy 30-Day Proof of Concept <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Presentation Navigation Toolbar -->
+    <footer class="w-full max-w-7xl flex items-center justify-between mt-4 glass-panel px-6 py-3 rounded-2xl z-20">
+        <div class="flex items-center space-x-3 text-xs text-slate-400">
+            <div id="slideDots" class="flex space-x-2">
+                <!-- Dots generated by JS -->
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <button onclick="prevSlide()" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-center transition border border-slate-700 cursor-pointer">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <span id="slideCounter" class="font-mono text-sm font-bold text-slate-300 w-28 text-center">Slide 1 / 9</span>
+            <button onclick="nextSlide()" class="w-10 h-10 rounded-xl bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition shadow-lg shadow-blue-600/30 cursor-pointer">
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 9;
+
+        function updateSlideView() {
+            // Update Slides
+            document.querySelectorAll('.slide').forEach((slide, index) => {
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // Update Counter
+            document.getElementById('slideCounter').innerText = `Slide ${currentSlide + 1} / ${totalSlides}`;
+
+            // Handle Dots 
+            const dotsContainer = document.getElementById('slideDots');
+            
+            // Generate dots if they don't exist
+            if(dotsContainer && dotsContainer.children.length === 0) {
+                for(let i=0; i<totalSlides; i++) {
+                    const newDot = document.createElement('button');
+                    newDot.className = 'cursor-pointer';
+                    newDot.onclick = (function(slideIndex) {
+                        return function() {
+                            goToSlide(slideIndex);
+                        };
+                    })(i);
+                    dotsContainer.appendChild(newDot);
+                }
+            }
+            
+            // Update dot styles
+            if(dotsContainer) {
+                const dots = dotsContainer.querySelectorAll('button');
+                dots.forEach((dot, index) => {
+                    if (index === currentSlide) {
+                        dot.className = 'w-6 h-2.5 rounded-full bg-blue-500 transition-all shadow-[0_0_8px_rgba(59,130,246,0.5)] cursor-pointer';
+                    } else {
+                        dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-700 hover:bg-slate-500 transition-all cursor-pointer';
+                    }
+                });
+            }
+        }
+
+        function runSimulation() {
+            const scenario = document.getElementById('scenarioSelect').value;
+            const loading = document.getElementById('simLoading');
+            const tEl = document.getElementById('simThroughput');
+            const qEl = document.getElementById('simQueue');
+            const dEl = document.getElementById('simDelay');
+            const tImp = document.getElementById('simThroughputImpact');
+            const qImp = document.getElementById('simQueueImpact');
+            const dImp = document.getElementById('simDelayImpact');
+            const actionTitle = document.getElementById('aiActionTitle');
+            const actionDesc = document.getElementById('aiActionDesc');
+
+            if (loading) loading.classList.remove('hidden');
+
+            setTimeout(() => {
+                if (loading) loading.classList.add('hidden');
+                if (scenario === '0') {
+                    if (tEl) tEl.innerText = '56';
+                    if (tImp) tImp.innerHTML = '<i class="fa-solid fa-arrow-up text-[10px]"></i> 17%';
+                    if (qEl) qEl.innerText = '3';
+                    if (qImp) qImp.innerHTML = '<i class="fa-solid fa-arrow-down text-[10px]"></i> 75%';
+                    if (dEl) dEl.innerText = '4';
+                    if (dImp) dImp.innerHTML = '<i class="fa-solid fa-arrow-down text-[10px]"></i> 78%';
+                    if (actionTitle) actionTitle.innerText = 'Execute Optimal Reroute';
+                    if (actionDesc) actionDesc.innerText = 'AI recommends moving 1 operator from Station 8 to Station 7 immediately to clear the 12-car backlog.';
+                } else if (scenario === '1') {
+                    if (tEl) tEl.innerText = '50';
+                    if (tImp) tImp.innerHTML = '<i class="fa-solid fa-arrow-up text-[10px]"></i> 4%';
+                    if (qEl) qEl.innerText = '1';
+                    if (qImp) qImp.innerHTML = '<i class="fa-solid fa-arrow-down text-[10px]"></i> 91%';
+                    if (dEl) dEl.innerText = '2';
+                    if (dImp) dImp.innerHTML = '<i class="fa-solid fa-arrow-down text-[10px]"></i> 88%';
+                    if (actionTitle) actionTitle.innerText = 'Execute Speed Governor';
+                    if (actionDesc) actionDesc.innerText = 'AI recommends scaling upstream conveyor velocity down 10% to prevent micro-stoppages.';
+                } else {
+                    if (tEl) tEl.innerText = '59';
+                    if (tImp) tImp.innerHTML = '<i class="fa-solid fa-arrow-up text-[10px]"></i> 22%';
+                    if (qEl) qEl.innerText = '0';
+                    if (qImp) qImp.innerHTML = '<i class="fa-solid fa-arrow-down text-[10px]"></i> 100%';
+                    if (dEl) dEl.innerText = '1';
+                    if (dImp) dImp.innerHTML = '<i class="fa-solid fa-arrow-down text-[10px]"></i> 94%';
+                    if (actionTitle) actionTitle.innerText = 'Execute Bypass Reroute';
+                    if (actionDesc) actionDesc.innerText = 'AI recommends diverting non-critical cosmetic trim checks to offline rework stations.';
+                }
+            }, 500);
+        }
+
+        function executeAction() {
+            const status = document.getElementById('actionStatus');
+            if (status) {
+                status.classList.remove('hidden');
+                setTimeout(() => {
+                    status.classList.add('hidden');
+                }, 4000);
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlideView();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlideView();
+            }
+        }
+
+        function goToSlide(index) {
+            if (index >= 0 && index < totalSlides) {
+                currentSlide = index;
+                updateSlideView();
+            }
+        }
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Initial setup
+        window.onload = function() {
+            updateSlideView();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "model": "Isolation Forest (Unsupervised Anomaly Detection)",
+  "training_line": {
+    "pr_auc": 0.6516,
+    "sample_count": 14400,
+    "anomaly_rate_pct": 1.67
+  },
+  "held_out_test_line": {
+    "pr_auc": 0.6503,
+    "sample_count": 14400,
+    "anomaly_rate_pct": 1.67
+  },
+  "overfitting_gap_prauc": 0.0013
+}

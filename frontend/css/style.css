@@ -1,0 +1,189 @@
+/* DigitalTwin.ai - Enterprise Operations Control Design System */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-main: #030712;
+  --panel-bg: rgba(15, 23, 42, 0.75);
+  --card-bg: rgba(17, 24, 39, 0.7);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --accent-blue: #3b82f6;
+  --accent-purple: #a855f7;
+  --accent-emerald: #10b981;
+  --accent-rose: #f43f5e;
+  --accent-amber: #f59e0b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-main);
+  color: #f3f4f6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Glassmorphism Styles */
+.glass-panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+}
+
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(3, 7, 18, 0.8);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(51, 65, 85, 0.6);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.8);
+}
+
+/* Glow Effects & Animations */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); }
+  50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.5); }
+}
+
+@keyframes pulseGlowRose {
+  0%, 100% { box-shadow: 0 0 15px rgba(244, 63, 94, 0.3); }
+  50% { box-shadow: 0 0 35px rgba(244, 63, 94, 0.7); }
+}
+
+@keyframes pulseGlowAmber {
+  0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.6); }
+}
+
+.glow-blue {
+  animation: pulseGlow 3s infinite;
+}
+
+.glow-rose {
+  animation: pulseGlowRose 2s infinite;
+}
+
+.glow-amber {
+  animation: pulseGlowAmber 2.5s infinite;
+}
+
+/* Assembly Line Station Node Grid */
+.station-node {
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.station-node:hover {
+  transform: translateY(-2px);
+}
+
+.station-nominal {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.04);
+}
+
+.station-warning {
+  border-color: rgba(245, 158, 11, 0.6);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.station-alert {
+  border-color: rgba(244, 63, 94, 0.8);
+  background: rgba(244, 63, 94, 0.12);
+}
+
+.station-dark-proxy {
+  border-style: dashed;
+}
+
+/* View Switching Transitions */
+.view-container {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.view-container.active {
+  display: block;
+  opacity: 1;
+}
+
+/* Nav Tab Active States */
+.nav-tab {
+  transition: all 0.2s ease;
+}
+
+.nav-tab.active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(168, 85, 247, 0.2));
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+/* Range Slider Styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #1e293b;
+  height: 6px;
+  border-radius: 9999px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: #60a5fa;
+}
+
+/* PLC Execution Overlay Toast */
+#plcToast {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(100px);
+  opacity: 0;
+}
+
+#plcToast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
