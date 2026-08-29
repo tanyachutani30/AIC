@@ -142,6 +142,10 @@ class DarkStationInferenceModel:
             random_state=random_state,
             n_jobs=1
         )
+        self.dwell_dev_75 = 3.0
+        self.dwell_dev_90 = 5.0
+        self.power_kw_75 = 4.2
+        self.power_kw_90 = 5.0
         self.is_fitted = False
 
     def extract_proxy_features(self, dwell_time: float, power_kw: float, nominal_ct: float, ambient_noise_db: float, optical_estimated_cycle_time: float) -> np.ndarray:
@@ -154,6 +158,17 @@ class DarkStationInferenceModel:
         Trains regressor to predict hidden health score (0 - 100%).
         """
         self.regressor.fit(X_proxies, y_health)
+        
+        # Calculate dynamic percentiles for confidence
+        # X_proxies columns: [dwell_time, power_kw, ambient_noise_db, optical_estimated_cycle_time, dwell_dev, power_ratio]
+        dwell_devs = np.abs(X_proxies[:, 4])
+        power_kws = X_proxies[:, 1]
+        
+        self.dwell_dev_75 = float(np.percentile(dwell_devs, 75))
+        self.dwell_dev_90 = float(np.percentile(dwell_devs, 90))
+        self.power_kw_75 = float(np.percentile(power_kws, 75))
+        self.power_kw_90 = float(np.percentile(power_kws, 90))
+        
         self.is_fitted = True
 
     def infer_health_and_confidence(
@@ -172,9 +187,9 @@ class DarkStationInferenceModel:
             # Fallback heuristic if not fitted
             dwell_dev = abs(dwell_time - nominal_ct)
             health = max(20.0, 100.0 - dwell_dev * 4.0 - max(0.0, (power_kw - 3.5) * 15.0))
-            if ambient_noise_rolling_std > 2.0:
+            if dwell_dev > self.dwell_dev_90 or power_kw > self.power_kw_90:
                 confidence = "Low"
-            elif abs(optical_estimated_cycle_time - dwell_time) < 3.0:
+            elif dwell_dev < self.dwell_dev_75 and power_kw < self.power_kw_75:
                 confidence = "High"
             else:
                 confidence = "Medium"
@@ -189,9 +204,10 @@ class DarkStationInferenceModel:
         est_health = float(np.clip(est_health, 0.0, 100.0))
 
         # Confidence level based on stability of proxy measurements
-        if ambient_noise_rolling_std > 2.0:
+        dwell_dev = abs(dwell_time - nominal_ct)
+        if dwell_dev > self.dwell_dev_90 or power_kw > self.power_kw_90:
             confidence = "Low"
-        elif abs(optical_estimated_cycle_time - dwell_time) < 3.0:
+        elif dwell_dev < self.dwell_dev_75 and power_kw < self.power_kw_75:
             confidence = "High"
         else:
             confidence = "Medium"
@@ -203,9 +219,20 @@ class DarkStationInferenceModel:
         }
 
     def save(self, filepath: str) -> None:
-        joblib.dump({"regressor": self.regressor, "is_fitted": self.is_fitted}, filepath)
+        joblib.dump({
+            "regressor": self.regressor, 
+            "is_fitted": self.is_fitted,
+            "dwell_dev_75": self.dwell_dev_75,
+            "dwell_dev_90": self.dwell_dev_90,
+            "power_kw_75": self.power_kw_75,
+            "power_kw_90": self.power_kw_90
+        }, filepath)
 
     def load(self, filepath: str) -> None:
         data = joblib.load(filepath)
         self.regressor = data["regressor"]
         self.is_fitted = data["is_fitted"]
+        self.dwell_dev_75 = data.get("dwell_dev_75", 3.0)
+        self.dwell_dev_90 = data.get("dwell_dev_90", 5.0)
+        self.power_kw_75 = data.get("power_kw_75", 4.2)
+        self.power_kw_90 = data.get("power_kw_90", 5.0)
