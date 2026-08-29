@@ -7,8 +7,19 @@ Includes SPC (Statistical Process Control) 3-sigma baseline comparator.
 import numpy as np
 import joblib
 from typing import Dict, List, Any, Tuple, Optional
+import json
+import os
 from sklearn.ensemble import IsolationForest
 from sklearn.preprocessing import StandardScaler
+
+def _get_iforest_defaults() -> Dict[str, Any]:
+    try:
+        cfg_path = os.path.join(os.path.dirname(__file__), "..", "config", "line_config_default.json")
+        with open(cfg_path, "r") as f:
+            cfg = json.load(f)
+            return cfg.get("model_hyperparameters", {}).get("isolation_forest", {})
+    except Exception:
+        return {"contamination": 0.05, "n_estimators": 120}
 
 
 class StationIsolationForestDetector:
@@ -17,13 +28,15 @@ class StationIsolationForestDetector:
     Extracts rolling statistical features (mean, std, delta) from telemetry.
     """
 
-    def __init__(self, contamination: float = 0.05, random_state: int = 42):
-        self.contamination = contamination
+    def __init__(self, contamination: Optional[float] = None, n_estimators: Optional[int] = None, random_state: int = 42):
+        defaults = _get_iforest_defaults()
+        self.contamination = contamination if contamination is not None else defaults.get("contamination", 0.05)
+        self.n_estimators = n_estimators if n_estimators is not None else defaults.get("n_estimators", 120)
         self.random_state = random_state
         self.model = IsolationForest(
-            n_estimators=120,
+            n_estimators=self.n_estimators,
             max_samples="auto",
-            contamination=contamination,
+            contamination=self.contamination,
             random_state=random_state,
             n_jobs=1
         )

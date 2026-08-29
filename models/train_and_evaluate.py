@@ -52,7 +52,17 @@ def run_training_and_evaluation() -> Dict[str, Any]:
     # 2. Train Isolation Forest Anomaly Detector
     # -------------------------------------------------------------
     print("\n[Step 2/5] Training Isolation Forest on sensor-rich stations...")
-    iforest = StationIsolationForestDetector(contamination=0.06, random_state=42)
+    with open("config/line_config_default.json", "r") as f:
+        cfg = json.load(f)
+        hp = cfg.get("model_hyperparameters", {})
+        if_hp = hp.get("isolation_forest", {})
+        rf_hp = hp.get("random_forest", {})
+        
+    iforest = StationIsolationForestDetector(
+        contamination=if_hp.get("contamination"), 
+        n_estimators=if_hp.get("n_estimators"), 
+        random_state=42
+    )
     sensor_rich_train = [r for r in all_train_records if r.get("sensor_rich", False)]
     iforest.fit(sensor_rich_train)
     iforest.save(str(artifacts_dir / "isolation_forest.joblib"))
@@ -75,7 +85,11 @@ def run_training_and_evaluation() -> Dict[str, Any]:
     # 4. Train Random Forest Defect Classifier & Dark-Station Model
     # -------------------------------------------------------------
     print("\n[Step 4/5] Training Random Forest Defect Classifier & Dark-Station Model...")
-    rf_defect = DefectRiskRandomForest(random_state=42)
+    rf_defect = DefectRiskRandomForest(
+        n_estimators=rf_hp.get("n_estimators"),
+        max_depth=rf_hp.get("max_depth"),
+        random_state=42
+    )
     rf_dark = DarkStationInferenceModel(random_state=42)
 
     all_scores = iforest.batch_score_records(all_train_records)

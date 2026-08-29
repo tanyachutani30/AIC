@@ -71,5 +71,15 @@
     "upstream_source_station_id": 4,
     "downstream_manifest_station_id": 22,
     "bottleneck_only_station_id": 14
+  },
+  "model_hyperparameters": {
+    "isolation_forest": {
+      "contamination": 0.05,
+      "n_estimators": 120
+    },
+    "random_forest": {
+      "n_estimators": 100,
+      "max_depth": 10
+    }
   }
 }

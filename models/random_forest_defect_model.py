@@ -8,8 +8,19 @@ Implements:
 from typing import Dict, List, Any, Tuple, Optional
 import numpy as np
 import joblib
+import json
+import os
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
+
+def _get_rf_defaults() -> Dict[str, Any]:
+    try:
+        cfg_path = os.path.join(os.path.dirname(__file__), "..", "config", "line_config_default.json")
+        with open(cfg_path, "r") as f:
+            cfg = json.load(f)
+            return cfg.get("model_hyperparameters", {}).get("random_forest", {})
+    except Exception:
+        return {"n_estimators": 100, "max_depth": 6}
 
 
 FEATURE_NAMES = [
@@ -30,11 +41,14 @@ class DefectRiskRandomForest:
     to predict unit failure probability before downstream QA.
     """
 
-    def __init__(self, random_state: int = 42):
+    def __init__(self, n_estimators: Optional[int] = None, max_depth: Optional[int] = None, random_state: int = 42):
+        defaults = _get_rf_defaults()
+        self.n_estimators = n_estimators if n_estimators is not None else defaults.get("n_estimators", 100)
+        self.max_depth = max_depth if max_depth is not None else defaults.get("max_depth", 6)
         self.random_state = random_state
         self.model = RandomForestClassifier(
-            n_estimators=100,
-            max_depth=6,
+            n_estimators=self.n_estimators,
+            max_depth=self.max_depth,
             min_samples_leaf=4,
             class_weight="balanced",
             random_state=random_state,
