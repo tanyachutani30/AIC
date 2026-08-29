@@ -31,6 +31,30 @@ class TestMLModels(unittest.TestCase):
         anom_score = detector.score_record({"station_id": 8, "cycle_time": 75.0, "torque_nm": 68.0, "vibration_rms": 4.5, "temperature_c": 52.0})
         self.assertGreater(anom_score, 60.0)
 
+    def test_isolation_forest_missing_values(self):
+        detector = StationIsolationForestDetector(contamination=0.05, random_state=42)
+        # Create normal baseline data with all present
+        normal_data = [
+            {"station_id": 8, "cycle_time": 59.0 + np.random.normal(0, 0.5), "torque_nm": 50.0 + np.random.normal(0, 0.5), "vibration_rms": 1.2, "temperature_c": 38.0}
+            for _ in range(100)
+        ]
+        detector.fit(normal_data)
+        
+        # Check feature shape
+        features = detector.extract_features([{"station_id": 8, "cycle_time": 60.0}])
+        self.assertEqual(features.shape, (1, 9), "Feature vector should now have 9 dimensions (6 base + 3 mask)")
+        self.assertEqual(features[0, 6], 1.0, "torque_nm mask should be 1 (missing)")
+        
+        # Test record with missing values vs present values
+        rec_present = {"station_id": 8, "cycle_time": 59.1, "torque_nm": 50.2, "vibration_rms": 1.21, "temperature_c": 38.1}
+        score_present = detector.score_record(rec_present)
+        
+        # Since it was trained on data where all values are present, missing data should score differently (and usually higher/anomalous)
+        rec_missing = {"station_id": 8, "cycle_time": 59.1} # Missing torque, vib, temp
+        score_missing = detector.score_record(rec_missing)
+        
+        self.assertNotEqual(score_present, score_missing, "Scores should differ for present vs missing data")
+
     def test_lstm_forecaster(self):
         forecaster = BottleneckForecaster(seq_len=10, horizon=3, hidden_dim=16)
         

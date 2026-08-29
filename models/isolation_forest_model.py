@@ -36,18 +36,29 @@ class StationIsolationForestDetector:
     def extract_features(self, telemetry_rows: List[Dict[str, Any]]) -> np.ndarray:
         """
         Builds multivariate feature matrix from telemetry records.
-        Features: [cycle_time, torque_nm, vibration_rms, temperature_c, power_kw, rfid_dwell]
+        Features: [cycle_time, torque_nm, vibration_rms, temperature_c, power_kw, rfid_dwell,
+                   torque_missing, vibration_missing, temperature_missing]
         """
         feats = []
         for r in telemetry_rows:
             ct = float(r.get("cycle_time", 60.0))
-            tq = float(r.get("torque_nm") if r.get("torque_nm") is not None else 50.0)
-            vib = float(r.get("vibration_rms") if r.get("vibration_rms") is not None else 1.25)
-            tmp = float(r.get("temperature_c") if r.get("temperature_c") is not None else 38.0)
+            
+            tq_val = r.get("torque_nm")
+            tq_missing = 1.0 if tq_val is None else 0.0
+            tq = float(tq_val if tq_val is not None else 50.0)
+            
+            vib_val = r.get("vibration_rms")
+            vib_missing = 1.0 if vib_val is None else 0.0
+            vib = float(vib_val if vib_val is not None else 1.25)
+            
+            tmp_val = r.get("temperature_c")
+            tmp_missing = 1.0 if tmp_val is None else 0.0
+            tmp = float(tmp_val if tmp_val is not None else 38.0)
+            
             pwr = float(r.get("power_kw", 3.0))
             dwell = float(r.get("rfid_dwell_time_sec", 60.0))
             
-            feats.append([ct, tq, vib, tmp, pwr, dwell])
+            feats.append([ct, tq, vib, tmp, pwr, dwell, tq_missing, vib_missing, tmp_missing])
         return np.array(feats, dtype=np.float32)
 
     def fit(self, training_telemetry: List[Dict[str, Any]]) -> None:
